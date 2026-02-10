@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Pomodoro Timer</title>
+<style>
+:root {
+  --bg: #f0f4f8; --bg2: #ffffff; --bg3: #e8eef4;
+  --text: #1a2332; --text2: #5a6a7a; --text3: #8a9ab0;
+  --accent: #2b95d6; --accent2: #48bb78; --accent-soft: rgba(43,149,214,0.1);
+  --danger: #e53e3e; --warn: #ed8936; --ring-bg: #e2e8f0;
+  --shadow: 0 4px 24px rgba(0,0,0,0.06); --radius: 16px;
+  --work: #2b95d6; --short: #48bb78; --long: #9f7aea;
+  --transition: 0.3s ease;
+}
+.dark {
+  --bg: #0f1419; --bg2: #1a2332; --bg3: #243044;
+  --text: #e8eef4; --text2: #8a9ab0; --text3: #5a6a7a;
+  --accent: #4da8e8; --accent2: #68d391; --accent-soft: rgba(77,168,232,0.12);
+  --ring-bg: #2a3a4e; --shadow: 0 4px 24px rgba(0,0,0,0.3);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg); color: var(--text);
+  min-height: 100vh; transition: background var(--transition), color var(--transition);
+  overflow-x: hidden;
+}
+
+/* Layout */
+.app { max-width: 480px; margin: 0 auto; padding: 20px 16px 40px; }
+
+/* Header */
+.header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 24px; padding: 0 4px;
+}
+.header h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+.header-actions { display: flex; gap: 8px; }
+.icon-btn {
+  width: 40px; height: 40px; border-radius: 12px; border: none;
+  background: var(--bg3); color: var(--text2); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; transition: all var(--transition);
+}
+.icon-btn:hover { background: var(--accent-soft); color: var(--accent); }
+
+/* Card */
+.card {
+  background: var(--bg2); border-radius: var(--radius);
+  padding: 24px; margin-bottom: 16px;
+  box-shadow: var(--shadow); transition: all var(--transition);
+}
+.card-title {
+  font-size: 13px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 1px; color: var(--text3); margin-bottom: 16px;
+}
+
+/* Mode tabs */
+.mode-tabs {
+  display: flex; gap: 6px; margin-bottom: 28px;
+  background: var(--bg3); border-radius: 12px; padding: 4px;
+}
+.mode-tab {
+  flex: 1; padding: 10px 8px; border: none; border-radius: 10px;
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  background: transparent; color: var(--text2); transition: all var(--transition);
+}
+.mode-tab.active { background: var(--bg2); color: var(--text); box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+
+/* Timer ring */
+.timer-container {
+  display: flex; flex-direction: column; align-items: center; margin-bottom: 28px;
+}
+.timer-ring-wrap { position: relative; width: 220px; height: 220px; margin-bottom: 12px; }
+.timer-ring-wrap svg { transform: rotate(-90deg); width: 220px; height: 220px; }
+.ring-bg { fill: none; stroke: var(--ring-bg); stroke-width: 8; }
+.ring-progress { fill: none; stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset 0.5s linear, stroke var(--transition); }
+.timer-display {
+  position: absolute; inset: 0; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+}
+.timer-time { font-size: 52px; font-weight: 200; letter-spacing: 2px; font-variant-numeric: tabular-nums; }
+.timer-label { font-size: 13px; color: var(--text2); font-weight: 500; margin-top: 2px; }
+.pomodoro-dots { display: flex; gap: 8px; margin-top: 4px; }
+.pom-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--ring-bg); transition: all var(--transition);
+}
+.pom-dot.filled { background: var(--accent); box-shadow: 0 0 8px rgba(43,149,214,0.4); }
+
+/* Controls */
+.controls { display: flex; gap: 10px; justify-content: center; margin-bottom: 12px; }
+.btn {
+  border: none; border-radius: 12px; font-size: 14px; font-weight: 600;
+  cursor: pointer; transition: all var(--transition); display: flex;
+  align-items: center; justify-content: center; gap: 6px;
+}
+.btn-primary {
+  padding: 14px 40px; font-size: 16px; color: #fff;
+  background: var(--work); box-shadow: 0 4px 16px rgba(43,149,214,0.3);
+}
+.btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
+.btn-secondary {
+  padding: 14px 20px; background: var(--bg3); color: var(--text2);
+}
+.btn-secondary:hover { background: var(--accent-soft); color: var(--accent); }
+
+/* Task input */
+.task-input-wrap {
+  display: flex; gap: 8px; margin-bottom: 16px;
+}
+.task-input {
+  flex: 1; padding: 12px 16px; border-radius: 12px; border: 2px solid var(--bg3);
+  background: var(--bg); color: var(--text); font-size: 14px;
+  transition: all var(--transition); outline: none;
+}
+.task-input:focus { border-color: var(--accent); }
+.task-input::placeholder { color: var(--text3); }
+.btn-add {
+  padding: 12px 16px; background: var(--accent); color: #fff;
+  border-radius: 12px; border: none; font-size: 18px; cursor: pointer;
+  transition: all var(--transition);
+}
+.btn-add:hover { filter: brightness(1.1); }
+
+/* Task list */
+.task-list { list-style: none; }
+.task-item {
+  display: flex; align-items: center; gap: 12px; padding: 12px 0;
+  border-bottom: 1px solid var(--bg3); transition: all var(--transition);
+}
+.task-item:last-child { border-bottom: none; }
+.task-check {
+  width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--text3);
+  background: transparent; cursor: pointer; display: flex;
+  align-items: center; justify-content: center; flex-shrink: 0;
+  transition: all var(--transition); color: transparent; font-size: 12px;
+}
+.task-check.done { background: var(--accent2); border-color: var(--accent2); color: #fff; }
+.task-text { flex: 1; font-size: 14px; transition: all var(--transition); }
+.task-text.done { text-decoration: line-through; color: var(--text3); }
+.task-poms { font-size: 12px; color: var(--text3); white-space: nowrap; }
+.task-del {
+  background: none; border: none; color: var(--text3); cursor: pointer;
+  font-size: 16px; padding: 4px; opacity: 0; transition: all var(--transition);
+}
+.task-item:hover .task-del { opacity: 1; }
+.task-del:hover { color: var(--danger); }
+
+/* Stats grid */
+.stats-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px;
+}
+.stat-box {
+  text-align: center; padding: 14px 8px; border-radius: 12px;
+  background: var(--bg); transition: all var(--transition);
+}
+.stat-num { font-size: 28px; font-weight: 700; line-height: 1.2; }
+.stat-label { font-size: 11px; color: var(--text2); margin-top: 2px; font-weight: 500; }
+.stat-num.blue { color: var(--accent); }
+.stat-num.green { color: var(--accent2); }
+.stat-num.purple { color: #9f7aea; }
+.stat-num.orange { color: var(--warn); }
+
+/* Chart */
+.chart-wrap { margin-top: 8px; }
+.chart-title { font-size: 13px; font-weight: 600; color: var(--text2); margin-bottom: 12px; }
+.chart {
+  display: flex; align-items: flex-end; gap: 8px; height: 100px;
+  padding: 0 4px;
+}
+.chart-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.chart-bar {
+  width: 100%; border-radius: 6px 6px 2px 2px;
+  background: var(--accent); min-height: 4px;
+  transition: height 0.5s ease, background var(--transition);
+  position: relative;
+}
+.chart-bar.today { background: var(--accent2); }
+.chart-val {
+  font-size: 10px; font-weight: 600; color: var(--text2);
+  position: absolute; top: -16px; left: 50%; transform: translateX(-50%);
+}
+.chart-label { font-size: 11px; color: var(--text3); font-weight: 500; }
+
+/* History */
+.history-list { list-style: none; }
+.history-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 0; border-bottom: 1px solid var(--bg3); font-size: 13px;
+}
+.history-item:last-child { border-bottom: none; }
+.history-mode {
+  padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 600;
+}
+.history-mode.work { background: rgba(43,149,214,0.12); color: var(--work); }
+.history-mode.short { background: rgba(72,187,120,0.12); color: var(--short); }
+.history-mode.long { background: rgba(159,122,234,0.12); color: var(--long); }
+.history-time { color: var(--text3); }
+.history-task { flex:1; margin: 0 12px; color: var(--text2); }
+
+/* Streak */
+.streak-row {
+  display: flex; align-items: center; gap: 16px; justify-content: center;
+  padding: 12px; border-radius: 12px; background: var(--bg);
+  margin-bottom: 12px;
+}
+.streak-item { text-align: center; }
+.streak-num { font-size: 22px; font-weight: 700; }
+.streak-label { font-size: 11px; color: var(--text2); }
+
+/* Settings modal */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 100;
+  display: none; align-items: center; justify-content: center;
+  backdrop-filter: blur(4px); padding: 20px;
+}
+.modal-overlay.show { display: flex; }
+.modal {
+  background: var(--bg2); border-radius: 20px; padding: 28px;
+  width: 100%; max-width: 400px; box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+}
+.modal h2 { font-size: 18px; margin-bottom: 20px; }
+.setting-row {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 16px;
+}
+.setting-label { font-size: 14px; color: var(--text2); }
+.setting-input {
+  width: 70px; padding: 8px 12px; border-radius: 8px; border: 2px solid var(--bg3);
+  background: var(--bg); color: var(--text); font-size: 14px; text-align: center;
+  outline: none; transition: all var(--transition);
+}
+.setting-input:focus { border-color: var(--accent); }
+.modal-actions { display: flex; gap: 8px; margin-top: 20px; }
+.modal-actions .btn { flex: 1; padding: 12px; }
+
+/* Quote */
+.quote-bar {
+  text-align: center; padding: 16px; font-style: italic;
+  color: var(--text2); font-size: 13px; line-height: 1.5;
+  border-radius: 12px; background: var(--accent-soft);
+}
+
+/* Confetti */
+.confetti-piece {
+  position: fixed; width: 10px; height: 10px; z-index: 200;
+  pointer-events: none; border-radius: 2px;
+}
+
+/* Empty state */
+.empty { text-align: center; color: var(--text3); font-size: 13px; padding: 20px 0; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 3px; }
+
+@media (max-width: 500px) {
+  .app { padding: 12px 10px 30px; }
+  .timer-time { font-size: 44px; }
+  .timer-ring-wrap { width: 190px; height: 190px; }
+  .timer-ring-wrap svg { width: 190px; height: 190px; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <!-- Header -->
+  <div class="header">
+    <h1>Pomodoro</h1>
+    <div class="header-actions">
+      <button class="icon-btn" id="btnTheme" title="Tema">&#9789;</button>
+      <button class="icon-btn" id="btnSettings" title="Configurar">&#9881;</button>
+    </div>
+  </div>
+
+  <!-- Timer Card -->
+  <div class="card">
+    <div class="mode-tabs" id="modeTabs">
+      <button class="mode-tab active" data-mode="work">Trabajo</button>
+      <button class="mode-tab" data-mode="short">Descanso</button>
+      <button class="mode-tab" data-mode="long">Largo</button>
+    </div>
+    <div class="timer-container">
+      <div class="timer-ring-wrap">
+        <svg viewBox="0 0 220 220">
+          <circle class="ring-bg" cx="110" cy="110" r="100"/>
+          <circle class="ring-progress" id="ringProgress" cx="110" cy="110" r="100"
+            stroke-dasharray="628.32" stroke-dashoffset="0"/>
+        </svg>
+        <div class="timer-display">
+          <div class="timer-time" id="timerTime">25:00</div>
+          <div class="timer-label" id="timerLabel">Enfoque</div>
+        </div>
+      </div>
+      <div class="pomodoro-dots" id="pomDots">
+        <div class="pom-dot"></div><div class="pom-dot"></div>
+        <div class="pom-dot"></div><div class="pom-dot"></div>
+      </div>
+    </div>
+    <div class="controls">
+      <button class="btn btn-secondary" id="btnReset" title="Reset">&#8634;</button>
+      <button class="btn btn-primary" id="btnStart">Iniciar</button>
+      <button class="btn btn-secondary" id="btnSkip" title="Saltar">&#9197;</button>
+    </div>
+  </div>
+
+  <!-- Tasks Card -->
+  <div class="card">
+    <div class="card-title">Tareas</div>
+    <div class="task-input-wrap">
+      <input class="task-input" id="taskInput" placeholder="¿En qué estás trabajando?" maxlength="80">
+      <button class="btn-add" id="btnAddTask">+</button>
+    </div>
+    <ul class="task-list" id="taskList"></ul>
+    <div class="empty" id="taskEmpty">Agrega una tarea para comenzar</div>
+  </div>
+
+  <!-- Stats Card -->
+  <div class="card">
+    <div class="card-title">Estadísticas</div>
+    <div class="streak-row">
+      <div class="streak-item">
+        <div class="streak-num orange" id="statStreak">0</div>
+        <div class="streak-label">Racha actual</div>
+      </div>
+      <div class="streak-item">
+        <div class="streak-num purple" id="statBestStreak">0</div>
+        <div class="streak-label">Mejor racha</div>
+      </div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="stat-num blue" id="statToday">0</div>
+        <div class="stat-label">Hoy</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num green" id="statWeek">0</div>
+        <div class="stat-label">Semana</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num purple" id="statTotal">0</div>
+        <div class="stat-label">Total</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num blue" id="statHours">0.0</div>
+        <div class="stat-label">Horas enfocado</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num green" id="statTodayMin">0</div>
+        <div class="stat-label">Min hoy</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num orange" id="statSessions">0</div>
+        <div class="stat-label">Sesiones hoy</div>
+      </div>
+    </div>
+    <div class="chart-wrap">
+      <div class="chart-title">Esta semana</div>
+      <div class="chart" id="weekChart"></div>
+    </div>
+  </div>
+
+  <!-- Quote -->
+  <div class="quote-bar" id="quoteBar">"El secreto de avanzar es comenzar." — Mark Twain</div>
+
+  <!-- History Card -->
+  <div class="card" style="margin-top:16px">
+    <div class="card-title">Historial reciente</div>
+    <ul class="history-list" id="historyList"></ul>
+    <div class="empty" id="historyEmpty">Completa tu primer pomodoro</div>
+  </div>
+</div>
+
+<!-- Settings Modal -->
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal">
+    <h2>Configuración</h2>
+    <div class="setting-row">
+      <span class="setting-label">Trabajo (min)</span>
+      <input class="setting-input" id="setWork" type="number" min="1" max="90" value="25">
+    </div>
+    <div class="setting-row">
+      <span class="setting-label">Descanso corto (min)</span>
+      <input class="setting-input" id="setShort" type="number" min="1" max="30" value="5">
+    </div>
+    <div class="setting-row">
+      <span class="setting-label">Descanso largo (min)</span>
+      <input class="setting-input" id="setLong" type="number" min="1" max="60" value="15">
+    </div>
+    <div class="setting-row">
+      <span class="setting-label">Pomodoros para largo</span>
+      <input class="setting-input" id="setCycle" type="number" min="2" max="10" value="4">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="btnCancelSettings">Cancelar</button>
+      <button class="btn btn-primary" id="btnSaveSettings">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+// ======================== STATE ========================
+const QUOTES = [
+  '"El secreto de avanzar es comenzar." — Mark Twain',
+  '"La disciplina es el puente entre metas y logros." — Jim Rohn',
+  '"No cuentes los días, haz que los días cuenten." — Muhammad Ali',
+  '"El éxito es la suma de pequeños esfuerzos repetidos." — Robert Collier',
+  '"Enfócate en ser productivo, no en estar ocupado." — Tim Ferriss',
+  '"Cada minuto de planificación ahorra diez de ejecución." — Brian Tracy',
+  '"La constancia es la virtud por la cual todo lo demás da fruto." — Arturo Graf',
+  '"Tu futuro depende de lo que hagas hoy." — Mahatma Gandhi',
+  '"La excelencia no es un acto, sino un hábito." — Aristóteles',
+  '"Un paso a la vez es suficiente para mí." — Gandhi',
+  '"Haz lo que puedas, con lo que tengas, donde estés." — Theodore Roosevelt',
+  '"El trabajo duro supera al talento cuando el talento no trabaja duro." — Tim Notke',
+  '"Empieza donde estás. Usa lo que tienes. Haz lo que puedas." — Arthur Ashe',
+  '"La mejor forma de predecir el futuro es creándolo." — Peter Drucker',
+  '"No es la carga lo que te derrumba, sino la forma en que la cargas." — Lou Holtz',
+];
+
+let config = { work:25, short:5, long:15, cycle:4 };
+let mode = 'work'; // work, short, long
+let timeLeft = config.work * 60;
+let totalTime = config.work * 60;
+let running = false;
+let interval = null;
+let pomCount = 0; // pomodoros in current cycle (0-3)
+let darkMode = false;
+
+// Data
+let data = loadData();
+
+function defaultData() {
+  return { totalPoms:0, totalMinutes:0, days:{}, streak:0, bestStreak:0, lastActiveDate:null, history:[], tasks:[] };
+}
+function loadData() {
+  try { const d = JSON.parse(localStorage.getItem('pomodoroData')); return d && d.totalPoms !== undefined ? d : defaultData(); }
+  catch(e) { return defaultData(); }
+}
+function saveData() { localStorage.setItem('pomodoroData', JSON.stringify(data)); }
+function loadConfig() {
+  try { const c = JSON.parse(localStorage.getItem('pomodoroConfig')); if(c && c.work) config=c; } catch(e){}
+}
+function saveConfig() { localStorage.setItem('pomodoroConfig', JSON.stringify(config)); }
+function loadTheme() { darkMode = localStorage.getItem('pomodoroDark')==='true'; applyTheme(); }
+function saveTheme() { localStorage.setItem('pomodoroDark', darkMode.toString()); }
+
+function today() { return new Date().toISOString().split('T')[0]; }
+function dayOfWeek(dateStr) { return new Date(dateStr+'T12:00:00').getDay(); }
+
+function getWeekDays() {
+  const d = new Date(); const day = d.getDay();
+  const mon = new Date(d); mon.setDate(d.getDate() - ((day+6)%7));
+  const days = [];
+  for (let i=0;i<7;i++) {
+    const dd = new Date(mon); dd.setDate(mon.getDate()+i);
+    days.push(dd.toISOString().split('T')[0]);
+  }
+  return days;
+}
+
+function updateStreak() {
+  const t = today();
+  if (data.lastActiveDate === t) return;
+  const yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
+  const yStr = yesterday.toISOString().split('T')[0];
+  if (data.lastActiveDate === yStr) {
+    data.streak++;
+  } else if (data.lastActiveDate !== t) {
+    data.streak = 1;
+  }
+  if (data.streak > data.bestStreak) data.bestStreak = data.streak;
+  data.lastActiveDate = t;
+}
+
+// ======================== AUDIO ========================
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx;
+function ensureAudio() { if(!audioCtx) audioCtx = new AudioCtx(); }
+
+function playBell() {
+  try {
+    ensureAudio();
+    const now = audioCtx.currentTime;
+    [523.25, 659.25, 783.99, 1046.5].forEach((freq,i) => {
+      const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+      o.type = 'sine'; o.frequency.setValueAtTime(freq, now + i*0.15);
+      g.gain.setValueAtTime(0.08, now + i*0.15);
+      g.gain.exponentialRampToValueAtTime(0.001, now + i*0.15 + 0.8);
+      o.connect(g); g.connect(audioCtx.destination);
+      o.start(now + i*0.15); o.stop(now + i*0.15 + 0.8);
+    });
+  } catch(e){}
+}
+
+function playTick() {
+  try {
+    ensureAudio();
+    const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+    o.type = 'sine'; o.frequency.setValueAtTime(800, audioCtx.currentTime);
+    g.gain.setValueAtTime(0.03, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(); o.stop(audioCtx.currentTime + 0.05);
+  } catch(e){}
+}
+
+// ======================== NOTIFICATIONS ========================
+function requestNotifPermission() {
+  if ('Notification' in window && Notification.permission === 'default') {
+    Notification.requestPermission();
+  }
+}
+
+function sendNotification(title, body) {
+  if ('Notification' in window && Notification.permission === 'granted') {
+    new Notification(title, { body, icon: 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍅</text></svg>' });
+  }
+}
+
+// ======================== CONFETTI ========================
+function launchConfetti() {
+  const colors = ['#2b95d6','#48bb78','#9f7aea','#ed8936','#e53e3e','#ffd740','#ff6b6b','#4ecdc4'];
+  for (let i=0; i<60; i++) {
+    const el = document.createElement('div');
+    el.className = 'confetti-piece';
+    el.style.left = Math.random()*100 + 'vw';
+    el.style.top = '-10px';
+    el.style.background = colors[Math.floor(Math.random()*colors.length)];
+    el.style.width = (Math.random()*8+6)+'px';
+    el.style.height = (Math.random()*8+6)+'px';
+    el.style.borderRadius = Math.random()>0.5 ? '50%' : '2px';
+    el.style.transform = `rotate(${Math.random()*360}deg)`;
+    document.body.appendChild(el);
+    const x = (Math.random()-0.5)*300;
+    const dur = Math.random()*1500+1500;
+    el.animate([
+      { transform: `translate(0,0) rotate(0deg)`, opacity: 1 },
+      { transform: `translate(${x}px, ${window.innerHeight+50}px) rotate(${Math.random()*720}deg)`, opacity: 0 }
+    ], { duration: dur, easing: 'cubic-bezier(0.25,0.46,0.45,0.94)' })
+    .onfinish = () => el.remove();
+  }
+}
+
+// ======================== DOM REFS ========================
+const $timerTime = document.getElementById('timerTime');
+const $timerLabel = document.getElementById('timerLabel');
+const $ringProgress = document.getElementById('ringProgress');
+const $btnStart = document.getElementById('btnStart');
+const $btnReset = document.getElementById('btnReset');
+const $btnSkip = document.getElementById('btnSkip');
+const $modeTabs = document.getElementById('modeTabs');
+const $pomDots = document.getElementById('pomDots');
+const $taskInput = document.getElementById('taskInput');
+const $taskList = document.getElementById('taskList');
+const $taskEmpty = document.getElementById('taskEmpty');
+const $weekChart = document.getElementById('weekChart');
+const $historyList = document.getElementById('historyList');
+const $historyEmpty = document.getElementById('historyEmpty');
+const $quoteBar = document.getElementById('quoteBar');
+const $settingsModal = document.getElementById('settingsModal');
+
+// ======================== TIMER LOGIC ========================
+function getModeTime(m) {
+  if (m==='work') return config.work*60;
+  if (m==='short') return config.short*60;
+  return config.long*60;
+}
+
+function getModeLabel(m) {
+  if (m==='work') return 'Enfoque';
+  if (m==='short') return 'Descanso';
+  return 'Descanso largo';
+}
+
+function getModeColor(m) {
+  if (m==='work') return 'var(--work)';
+  if (m==='short') return 'var(--short)';
+  return 'var(--long)';
+}
+
+function setMode(m, resetTimer=true) {
+  mode = m;
+  if (resetTimer) {
+    stopTimer();
+    timeLeft = getModeTime(m);
+    totalTime = timeLeft;
+  }
+  document.querySelectorAll('.mode-tab').forEach(t => t.classList.toggle('active', t.dataset.mode===m));
+  $timerLabel.textContent = getModeLabel(m);
+  $ringProgress.style.stroke = getModeColor(m);
+  $btnStart.style.background = getModeColor(m);
+  updateDisplay();
+}
+
+function updateDisplay() {
+  const min = Math.floor(timeLeft/60);
+  const sec = timeLeft%60;
+  const str = String(min).padStart(2,'0')+':'+String(sec).padStart(2,'0');
+  $timerTime.textContent = str;
+  document.title = running ? `${str} - ${getModeLabel(mode)}` : 'Pomodoro Timer';
+
+  const circumference = 2 * Math.PI * 100;
+  const progress = 1 - (timeLeft / totalTime);
+  $ringProgress.style.strokeDashoffset = circumference * (1 - progress);
+}
+
+function startTimer() {
+  if (running) return;
+  ensureAudio();
+  requestNotifPermission();
+  running = true;
+  $btnStart.textContent = 'Pausar';
+  interval = setInterval(tick, 1000);
+}
+
+function pauseTimer() {
+  running = false;
+  $btnStart.textContent = 'Reanudar';
+  clearInterval(interval);
+  document.title = 'Pomodoro Timer';
+}
+
+function stopTimer() {
+  running = false;
+  $btnStart.textContent = 'Iniciar';
+  clearInterval(interval);
+  document.title = 'Pomodoro Timer';
+}
+
+function resetTimer() {
+  stopTimer();
+  timeLeft = getModeTime(mode);
+  totalTime = timeLeft;
+  updateDisplay();
+}
+
+function tick() {
+  if (timeLeft > 0) {
+    timeLeft--;
+    if (timeLeft <= 3 && timeLeft > 0) playTick();
+    updateDisplay();
+  }
+  if (timeLeft <= 0) {
+    completeSession();
+  }
+}
+
+function completeSession() {
+  stopTimer();
+  playBell();
+
+  const t = today();
+  if (!data.days[t]) data.days[t] = { poms:0, minutes:0, sessions:0 };
+
+  if (mode === 'work') {
+    const mins = config.work;
+    data.totalPoms++;
+    data.totalMinutes += mins;
+    data.days[t].poms++;
+    data.days[t].minutes += mins;
+    data.days[t].sessions++;
+    pomCount++;
+
+    updateStreak();
+
+    // Add to history
+    const activeTask = getActiveTask();
+    data.history.unshift({
+      mode: 'work', duration: mins, time: new Date().toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'}),
+      task: activeTask ? activeTask.text : '', date: t
+    });
+    if (data.history.length > 20) data.history.length = 20;
+
+    // Increment task poms
+    if (activeTask) activeTask.poms = (activeTask.poms||0) + 1;
+
+    sendNotification('Pomodoro completado!', activeTask ? `Tarea: ${activeTask.text}` : 'Buen trabajo! Toma un descanso.');
+
+    // Check for long break
+    if (pomCount >= config.cycle) {
+      pomCount = 0;
+      launchConfetti();
+      $quoteBar.textContent = QUOTES[Math.floor(Math.random()*QUOTES.length)];
+      setMode('long');
+    } else {
+      $quoteBar.textContent = QUOTES[Math.floor(Math.random()*QUOTES.length)];
+      setMode('short');
+    }
+  } else {
+    // Break completed
+    data.history.unshift({
+      mode: mode, duration: mode==='short'?config.short:config.long,
+      time: new Date().toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'}),
+      task: '', date: t
+    });
+    if (data.history.length > 20) data.history.length = 20;
+    sendNotification('Descanso terminado!', 'Es hora de volver al trabajo!');
+    setMode('work');
+  }
+
+  saveData();
+  renderAll();
+}
+
+function skipSession() {
+  stopTimer();
+  if (mode==='work') {
+    if (pomCount >= config.cycle - 1) { pomCount=0; setMode('long'); }
+    else setMode('short');
+  } else {
+    setMode('work');
+  }
+}
+
+// ======================== TASKS ========================
+function getActiveTask() {
+  return data.tasks.find(t => !t.done);
+}
+
+function renderTasks() {
+  const todayTasks = data.tasks.filter(t => t.date === today());
+  $taskList.innerHTML = '';
+  $taskEmpty.style.display = todayTasks.length ? 'none' : 'block';
+
+  todayTasks.forEach((task, idx) => {
+    const realIdx = data.tasks.indexOf(task);
+    const li = document.createElement('li');
+    li.className = 'task-item';
+    li.innerHTML = `
+      <button class="task-check ${task.done?'done':''}" data-idx="${realIdx}">${task.done?'&#10003;':''}</button>
+      <span class="task-text ${task.done?'done':''}">${esc(task.text)}</span>
+      <span class="task-poms">${task.poms||0} 🍅</span>
+      <button class="task-del" data-idx="${realIdx}">&times;</button>
+    `;
+    $taskList.appendChild(li);
+  });
+}
+
+function addTask(text) {
+  if (!text.trim()) return;
+  data.tasks.push({ text: text.trim(), done:false, poms:0, date:today() });
+  saveData();
+  renderTasks();
+  $taskInput.value = '';
+}
+
+function toggleTask(idx) {
+  data.tasks[idx].done = !data.tasks[idx].done;
+  saveData(); renderTasks();
+}
+
+function deleteTask(idx) {
+  data.tasks.splice(idx, 1);
+  saveData(); renderTasks();
+}
+
+$taskList.addEventListener('click', e => {
+  const check = e.target.closest('.task-check');
+  const del = e.target.closest('.task-del');
+  if (check) toggleTask(parseInt(check.dataset.idx));
+  if (del) deleteTask(parseInt(del.dataset.idx));
+});
+
+$taskInput.addEventListener('keydown', e => { if (e.key==='Enter') addTask($taskInput.value); });
+document.getElementById('btnAddTask').addEventListener('click', () => addTask($taskInput.value));
+
+function esc(s) { const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+
+// ======================== STATS ========================
+function renderStats() {
+  const t = today();
+  const dayData = data.days[t] || { poms:0, minutes:0, sessions:0 };
+
+  document.getElementById('statToday').textContent = dayData.poms;
+  document.getElementById('statTodayMin').textContent = dayData.minutes;
+  document.getElementById('statSessions').textContent = dayData.sessions;
+
+  // Week
+  const weekDays = getWeekDays();
+  let weekPoms = 0;
+  weekDays.forEach(d => { if(data.days[d]) weekPoms += data.days[d].poms; });
+  document.getElementById('statWeek').textContent = weekPoms;
+
+  document.getElementById('statTotal').textContent = data.totalPoms;
+  document.getElementById('statHours').textContent = (data.totalMinutes/60).toFixed(1);
+  document.getElementById('statStreak').textContent = data.streak;
+  document.getElementById('statBestStreak').textContent = data.bestStreak;
+
+  // Chart
+  const dayNames = ['L','M','X','J','V','S','D'];
+  const weekData = weekDays.map(d => (data.days[d]||{poms:0}).poms);
+  const maxVal = Math.max(...weekData, 1);
+
+  $weekChart.innerHTML = '';
+  weekDays.forEach((d, i) => {
+    const val = weekData[i];
+    const h = Math.max(4, (val/maxVal)*80);
+    const isToday = d === t;
+    const wrap = document.createElement('div');
+    wrap.className = 'chart-bar-wrap';
+    wrap.innerHTML = `
+      <div class="chart-bar ${isToday?'today':''}" style="height:${h}px">
+        ${val>0?`<span class="chart-val">${val}</span>`:''}
+      </div>
+      <span class="chart-label">${dayNames[i]}</span>
+    `;
+    $weekChart.appendChild(wrap);
+  });
+}
+
+// ======================== HISTORY ========================
+function renderHistory() {
+  const recent = data.history.slice(0, 10);
+  $historyList.innerHTML = '';
+  $historyEmpty.style.display = recent.length ? 'none' : 'block';
+
+  recent.forEach(h => {
+    const li = document.createElement('li');
+    li.className = 'history-item';
+    const modeLabel = h.mode==='work'?'Trabajo':h.mode==='short'?'Descanso':'Largo';
+    li.innerHTML = `
+      <span class="history-mode ${h.mode}">${modeLabel}</span>
+      <span class="history-task">${h.task?esc(h.task):'-'}</span>
+      <span class="history-time">${h.duration}min · ${h.time}</span>
+    `;
+    $historyList.appendChild(li);
+  });
+}
+
+// ======================== POMODORO DOTS ========================
+function renderDots() {
+  $pomDots.innerHTML = '';
+  for (let i=0; i<config.cycle; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'pom-dot' + (i < pomCount ? ' filled' : '');
+    $pomDots.appendChild(dot);
+  }
+}
+
+// ======================== THEME ========================
+function applyTheme() {
+  document.body.classList.toggle('dark', darkMode);
+  document.getElementById('btnTheme').innerHTML = darkMode ? '&#9788;' : '&#9789;';
+}
+
+// ======================== SETTINGS ========================
+function openSettings() {
+  document.getElementById('setWork').value = config.work;
+  document.getElementById('setShort').value = config.short;
+  document.getElementById('setLong').value = config.long;
+  document.getElementById('setCycle').value = config.cycle;
+  $settingsModal.classList.add('show');
+}
+
+function closeSettings() { $settingsModal.classList.remove('show'); }
+
+function saveSettings() {
+  const w = parseInt(document.getElementById('setWork').value) || 25;
+  const s = parseInt(document.getElementById('setShort').value) || 5;
+  const l = parseInt(document.getElementById('setLong').value) || 15;
+  const c = parseInt(document.getElementById('setCycle').value) || 4;
+  config = { work: Math.max(1,Math.min(90,w)), short: Math.max(1,Math.min(30,s)), long: Math.max(1,Math.min(60,l)), cycle: Math.max(2,Math.min(10,c)) };
+  saveConfig();
+  closeSettings();
+  resetTimer();
+  renderDots();
+}
+
+// ======================== EVENTS ========================
+$btnStart.addEventListener('click', () => { running ? pauseTimer() : startTimer(); });
+$btnReset.addEventListener('click', resetTimer);
+$btnSkip.addEventListener('click', skipSession);
+
+$modeTabs.addEventListener('click', e => {
+  const tab = e.target.closest('.mode-tab');
+  if (tab) setMode(tab.dataset.mode);
+});
+
+document.getElementById('btnTheme').addEventListener('click', () => { darkMode=!darkMode; applyTheme(); saveTheme(); });
+document.getElementById('btnSettings').addEventListener('click', openSettings);
+document.getElementById('btnCancelSettings').addEventListener('click', closeSettings);
+document.getElementById('btnSaveSettings').addEventListener('click', saveSettings);
+$settingsModal.addEventListener('click', e => { if(e.target===$settingsModal) closeSettings(); });
+
+// ======================== RENDER ========================
+function renderAll() {
+  renderTasks(); renderStats(); renderHistory(); renderDots(); updateDisplay();
+}
+
+// ======================== INIT ========================
+loadConfig(); loadTheme();
+setMode('work');
+renderAll();
+
+// Clean old tasks (>7 days)
+const cutoff = new Date(); cutoff.setDate(cutoff.getDate()-7);
+const cutoffStr = cutoff.toISOString().split('T')[0];
+data.tasks = data.tasks.filter(t => t.date >= cutoffStr);
+Object.keys(data.days).forEach(d => { if(d < cutoffStr) delete data.days[d]; });
+data.history = data.history.filter(h => h.date >= cutoffStr);
+saveData();
+
+})();
+</script>
+</body>
+</html>
