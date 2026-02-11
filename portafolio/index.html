@@ -187,6 +187,7 @@ section { padding: 100px 0; }
 .project-card:nth-child(1)::before { background: linear-gradient(135deg, var(--glow1), transparent 60%); }
 .project-card:nth-child(2)::before { background: linear-gradient(135deg, var(--glow2), transparent 60%); }
 .project-card:nth-child(3)::before { background: linear-gradient(135deg, var(--glow3), transparent 60%); }
+.project-card:nth-child(4)::before { background: linear-gradient(135deg, var(--glow2), transparent 60%); }
 .project-card:hover::before { opacity: 1; }
 
 .project-preview {
@@ -381,6 +382,24 @@ footer {
           </a>
         </div>
       </div>
+      <!-- Conversor -->
+      <div class="project-card reveal">
+        <div class="project-preview">
+          <div class="preview-bg" style="background:linear-gradient(135deg,#0ea574,#2b7de9)"></div>
+          <span class="emoji">💱</span>
+        </div>
+        <div class="project-info">
+          <div class="project-num c2" data-i18n="proj4Label">04 — FINANZAS</div>
+          <h3 class="project-name" data-i18n="proj4Name">Conversor de Monedas</h3>
+          <p class="project-desc" data-i18n="proj4Desc">Conversor en tiempo real con 10 monedas, historial, favoritos, conversión múltiple y tasas actualizadas automáticamente.</p>
+          <div class="project-tags">
+            <span class="tag">API REST</span><span class="tag">JavaScript</span><span class="tag">localStorage</span><span class="tag">Responsive</span>
+          </div>
+          <a href="../conversor-monedas/index.html" class="project-link">
+            <span data-i18n="viewProject">Ver proyecto</span> <span class="arrow">&#8594;</span>
+          </a>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -464,6 +483,8 @@ const i18n = {
     proj2Desc: 'Juego endless runner con pixel art, power-ups, modo día/noche, música 8-bit, sistema de vidas y modo difícil.',
     proj3Label: '03 — PRODUCTIVIDAD',
     proj3Desc: 'Timer profesional con estadísticas completas, tareas, gráficos semanales, rachas, modo oscuro y notificaciones.',
+    proj4Label: '04 — FINANZAS', proj4Name: 'Conversor de Monedas',
+    proj4Desc: 'Conversor en tiempo real con 10 monedas, historial, favoritos, conversión múltiple y tasas actualizadas automáticamente.',
     viewProject: 'Ver proyecto',
     sectionTech: 'Tecnologías', sectionTechTitle: 'Stack utilizado',
     techStructure: 'Estructura', techStyles: 'Estilos', techLogic: 'Lógica',
@@ -486,6 +507,8 @@ const i18n = {
     proj2Desc: 'Endless runner game with pixel art, power-ups, day/night mode, 8-bit music, lives system and hard mode.',
     proj3Label: '03 — PRODUCTIVITY',
     proj3Desc: 'Professional timer with full statistics, tasks, weekly charts, streaks, dark mode and notifications.',
+    proj4Label: '04 — FINANCE', proj4Name: 'Currency Converter',
+    proj4Desc: 'Real-time converter with 10 currencies, history, favorites, multi-convert and auto-updated exchange rates.',
     viewProject: 'View project',
     sectionTech: 'Technologies', sectionTechTitle: 'Tech stack',
     techStructure: 'Structure', techStyles: 'Styling', techLogic: 'Logic',

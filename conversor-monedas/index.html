@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Conversor de Monedas</title>
+<style>
+:root {
+  --bg: #f0f4f8; --bg2: #ffffff; --bg3: #e8eef4; --bg4: #f7f9fc;
+  --text: #1a2332; --text2: #5a6a7a; --text3: #8a9ab0;
+  --accent: #0ea574; --accent2: #0b8a60; --accent-soft: rgba(14,165,116,0.08);
+  --blue: #2b7de9; --blue-soft: rgba(43,125,233,0.08);
+  --red: #e53e3e; --red-soft: rgba(229,62,62,0.06);
+  --green: #0ea574; --green-soft: rgba(14,165,116,0.06);
+  --border: rgba(0,0,0,0.06); --shadow: 0 4px 24px rgba(0,0,0,0.05);
+  --radius: 16px; --transition: 0.3s ease;
+}
+.dark {
+  --bg: #0c1017; --bg2: #151c28; --bg3: #1e2738; --bg4: #1a2230;
+  --text: #e8eef4; --text2: #8a9ab0; --text3: #5a6a7a;
+  --accent-soft: rgba(14,165,116,0.12); --blue-soft: rgba(43,125,233,0.12);
+  --red-soft: rgba(229,62,62,0.1); --green-soft: rgba(14,165,116,0.1);
+  --border: rgba(255,255,255,0.06); --shadow: 0 4px 24px rgba(0,0,0,0.2);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg); color: var(--text); min-height: 100vh;
+  transition: background var(--transition), color var(--transition);
+}
+.app { max-width: 520px; margin: 0 auto; padding: 20px 16px 60px; }
+
+/* Header */
+.header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+.header h1 { font-size: 22px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+.header h1 .icon { font-size: 24px; }
+.header-actions { display: flex; gap: 6px; }
+.icon-btn {
+  width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--border);
+  background: var(--bg2); color: var(--text2); cursor: pointer;
+  display: flex; align-items: center; justify-content: center; font-size: 16px;
+  transition: all var(--transition);
+}
+.icon-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Card */
+.card {
+  background: var(--bg2); border-radius: var(--radius); padding: 24px;
+  margin-bottom: 16px; box-shadow: var(--shadow); border: 1px solid var(--border);
+  transition: all var(--transition);
+}
+.card-sm { padding: 16px 20px; }
+.card-title {
+  font-size: 12px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 1.5px; color: var(--text3); margin-bottom: 16px;
+}
+
+/* Status bar */
+.status-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 16px; border-radius: 10px; background: var(--green-soft);
+  margin-bottom: 20px; font-size: 12px;
+}
+.status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); margin-right: 8px; animation: blink 2s infinite; }
+.status-left { display: flex; align-items: center; color: var(--green); font-weight: 600; }
+.status-right { color: var(--text3); }
+.status-bar.error { background: var(--red-soft); }
+.status-bar.error .status-dot { background: var(--red); }
+.status-bar.error .status-left { color: var(--red); }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+/* Converter */
+.converter-row { position: relative; margin-bottom: 8px; }
+.currency-box {
+  display: flex; align-items: center; gap: 12px; padding: 16px;
+  border-radius: 14px; background: var(--bg); border: 2px solid var(--border);
+  transition: all var(--transition);
+}
+.currency-box:focus-within { border-color: var(--accent); }
+.currency-flag { font-size: 28px; flex-shrink: 0; }
+.currency-select-wrap { flex-shrink: 0; }
+.currency-select {
+  appearance: none; border: none; background: var(--bg3); color: var(--text);
+  font-size: 15px; font-weight: 700; padding: 8px 28px 8px 12px; border-radius: 8px;
+  cursor: pointer; outline: none; transition: all var(--transition);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238a9ab0' d='M2 4l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 8px center;
+}
+.currency-select:hover { background: var(--accent-soft); }
+.currency-input-wrap { flex: 1; text-align: right; }
+.currency-input {
+  width: 100%; border: none; background: transparent; color: var(--text);
+  font-size: 28px; font-weight: 300; text-align: right; outline: none;
+  font-variant-numeric: tabular-nums;
+}
+.currency-input::placeholder { color: var(--text3); }
+.currency-name { font-size: 11px; color: var(--text3); text-align: right; margin-top: 2px; }
+
+/* Swap button */
+.swap-wrap { display: flex; justify-content: center; margin: -6px 0; position: relative; z-index: 2; }
+.swap-btn {
+  width: 42px; height: 42px; border-radius: 50%; border: 3px solid var(--bg2);
+  background: var(--accent); color: #fff; font-size: 18px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all var(--transition); box-shadow: 0 2px 10px rgba(14,165,116,0.25);
+}
+.swap-btn:hover { transform: rotate(180deg); background: var(--accent2); }
+
+/* Rate info */
+.rate-info {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 0 0; margin-top: 12px; border-top: 1px solid var(--border);
+  font-size: 13px; color: var(--text2);
+}
+.rate-value { font-weight: 700; color: var(--text); }
+.fav-btn {
+  background: none; border: none; font-size: 18px; cursor: pointer;
+  color: var(--text3); transition: all var(--transition); padding: 4px;
+}
+.fav-btn:hover, .fav-btn.active { color: #fbbf24; }
+
+/* Favorites */
+.fav-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.fav-chip {
+  padding: 8px 14px; border-radius: 10px; background: var(--bg);
+  border: 1px solid var(--border); font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all var(--transition); display: flex;
+  align-items: center; gap: 6px;
+}
+.fav-chip:hover { border-color: var(--accent); background: var(--accent-soft); }
+.fav-chip .flags { font-size: 15px; }
+.fav-remove {
+  background: none; border: none; color: var(--text3); cursor: pointer;
+  font-size: 14px; margin-left: 2px; transition: color 0.2s;
+}
+.fav-remove:hover { color: var(--red); }
+.empty-msg { color: var(--text3); font-size: 13px; }
+
+/* History */
+.history-list { list-style: none; }
+.history-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 0; border-bottom: 1px solid var(--border);
+  cursor: pointer; transition: all var(--transition); gap: 12px;
+}
+.history-item:last-child { border-bottom: none; }
+.history-item:hover { padding-left: 6px; }
+.history-main { flex: 1; }
+.history-conversion { font-size: 14px; font-weight: 600; }
+.history-conversion .arrow { color: var(--accent); margin: 0 6px; }
+.history-time { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.history-rate { font-size: 12px; color: var(--text2); text-align: right; white-space: nowrap; }
+.clear-btn {
+  background: none; border: none; color: var(--text3); cursor: pointer;
+  font-size: 12px; font-weight: 600; transition: color 0.2s; float: right;
+}
+.clear-btn:hover { color: var(--red); }
+
+/* Multi convert */
+.multi-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+}
+.multi-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 12px; border-radius: 10px; background: var(--bg);
+  font-size: 13px; transition: all var(--transition);
+}
+.multi-item:hover { background: var(--accent-soft); }
+.multi-left { display: flex; align-items: center; gap: 6px; }
+.multi-flag { font-size: 18px; }
+.multi-code { font-weight: 700; }
+.multi-value { font-weight: 600; color: var(--accent); font-variant-numeric: tabular-nums; }
+
+/* Loading */
+.loading { text-align: center; padding: 40px; color: var(--text3); }
+.spinner {
+  width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--accent);
+  border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Responsive */
+@media (max-width: 500px) {
+  .app { padding: 12px 10px 40px; }
+  .currency-input { font-size: 22px; }
+  .multi-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- Header -->
+  <div class="header">
+    <h1><span class="icon">💱</span> Conversor</h1>
+    <div class="header-actions">
+      <button class="icon-btn" id="btnRefresh" title="Actualizar tasas">&#8635;</button>
+      <button class="icon-btn" id="btnTheme" title="Tema">&#9789;</button>
+    </div>
+  </div>
+
+  <!-- Status -->
+  <div class="status-bar" id="statusBar">
+    <div class="status-left"><span class="status-dot"></span> <span id="statusText">Conectando...</span></div>
+    <div class="status-right" id="statusTime"></div>
+  </div>
+
+  <!-- Converter -->
+  <div class="card" id="converterCard">
+    <div class="converter-row">
+      <div class="currency-box">
+        <span class="currency-flag" id="flagFrom">🇺🇸</span>
+        <div class="currency-select-wrap">
+          <select class="currency-select" id="selectFrom"></select>
+        </div>
+        <div class="currency-input-wrap">
+          <input class="currency-input" id="inputFrom" type="text" inputmode="decimal" placeholder="0.00" value="1">
+          <div class="currency-name" id="nameFrom">Dólar estadounidense</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="swap-wrap">
+      <button class="swap-btn" id="btnSwap" title="Intercambiar">&#8645;</button>
+    </div>
+
+    <div class="converter-row">
+      <div class="currency-box" style="border-color:var(--accent);background:var(--accent-soft)">
+        <span class="currency-flag" id="flagTo">🇦🇷</span>
+        <div class="currency-select-wrap">
+          <select class="currency-select" id="selectTo"></select>
+        </div>
+        <div class="currency-input-wrap">
+          <input class="currency-input" id="inputTo" type="text" inputmode="decimal" placeholder="0.00" readonly style="color:var(--accent);font-weight:600">
+          <div class="currency-name" id="nameTo">Peso argentino</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rate-info">
+      <div><span id="rateText">1 USD = ... ARS</span></div>
+      <button class="fav-btn" id="btnFav" title="Agregar a favoritos">&#9734;</button>
+    </div>
+  </div>
+
+  <!-- Favorites -->
+  <div class="card card-sm" id="favCard" style="display:none">
+    <div class="card-title">Favoritos</div>
+    <div class="fav-chips" id="favList"></div>
+  </div>
+
+  <!-- Multi convert -->
+  <div class="card card-sm">
+    <div class="card-title">Conversión rápida</div>
+    <div class="multi-grid" id="multiGrid"></div>
+  </div>
+
+  <!-- History -->
+  <div class="card card-sm" id="historyCard">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div class="card-title" style="margin-bottom:0">Historial</div>
+      <button class="clear-btn" id="btnClearHistory">Limpiar</button>
+    </div>
+    <ul class="history-list" id="historyList"></ul>
+    <div class="empty-msg" id="historyEmpty">Aún no hay conversiones</div>
+  </div>
+</div>
+
+<script>
+(() => {
+  // =================== CURRENCIES ===================
+  const CURRENCIES = {
+    USD: { flag: '🇺🇸', name: 'Dólar estadounidense', nameEn: 'US Dollar' },
+    ARS: { flag: '🇦🇷', name: 'Peso argentino', nameEn: 'Argentine Peso' },
+    EUR: { flag: '🇪🇺', name: 'Euro', nameEn: 'Euro' },
+    BRL: { flag: '🇧🇷', name: 'Real brasileño', nameEn: 'Brazilian Real' },
+    GBP: { flag: '🇬🇧', name: 'Libra esterlina', nameEn: 'British Pound' },
+    JPY: { flag: '🇯🇵', name: 'Yen japonés', nameEn: 'Japanese Yen' },
+    MXN: { flag: '🇲🇽', name: 'Peso mexicano', nameEn: 'Mexican Peso' },
+    CAD: { flag: '🇨🇦', name: 'Dólar canadiense', nameEn: 'Canadian Dollar' },
+    AUD: { flag: '🇦🇺', name: 'Dólar australiano', nameEn: 'Australian Dollar' },
+    CHF: { flag: '🇨🇭', name: 'Franco suizo', nameEn: 'Swiss Franc' },
+  };
+  const CODES = Object.keys(CURRENCIES);
+
+  // =================== STATE ===================
+  let rates = {};
+  let fromCode = 'USD', toCode = 'ARS';
+  let favorites = JSON.parse(localStorage.getItem('convFavorites') || '[]');
+  let history = JSON.parse(localStorage.getItem('convHistory') || '[]');
+  let darkMode = localStorage.getItem('convDark') === 'true';
+  let lastUpdate = null;
+  let refreshTimer;
+
+  // =================== DOM ===================
+  const $selectFrom = document.getElementById('selectFrom');
+  const $selectTo = document.getElementById('selectTo');
+  const $inputFrom = document.getElementById('inputFrom');
+  const $inputTo = document.getElementById('inputTo');
+  const $flagFrom = document.getElementById('flagFrom');
+  const $flagTo = document.getElementById('flagTo');
+  const $nameFrom = document.getElementById('nameFrom');
+  const $nameTo = document.getElementById('nameTo');
+  const $rateText = document.getElementById('rateText');
+  const $statusText = document.getElementById('statusText');
+  const $statusTime = document.getElementById('statusTime');
+  const $statusBar = document.getElementById('statusBar');
+  const $btnFav = document.getElementById('btnFav');
+  const $favCard = document.getElementById('favCard');
+  const $favList = document.getElementById('favList');
+  const $multiGrid = document.getElementById('multiGrid');
+  const $historyList = document.getElementById('historyList');
+  const $historyEmpty = document.getElementById('historyEmpty');
+
+  // =================== INIT SELECTS ===================
+  function populateSelects() {
+    CODES.forEach(code => {
+      const c = CURRENCIES[code];
+      const optF = new Option(`${c.flag} ${code}`, code);
+      const optT = new Option(`${c.flag} ${code}`, code);
+      $selectFrom.add(optF);
+      $selectTo.add(optT);
+    });
+    $selectFrom.value = fromCode;
+    $selectTo.value = toCode;
+  }
+
+  // =================== API ===================
+  async function fetchRates() {
+    $statusText.textContent = 'Actualizando...';
+    $statusBar.classList.remove('error');
+    try {
+      const res = await fetch(`https://latest.currency-api.pages.dev/v1/currencies/usd.json`);
+      if (!res.ok) throw new Error('API error');
+      const data = await res.json();
+      rates = data.usd || data;
+      lastUpdate = new Date();
+      $statusText.textContent = 'Tasas actualizadas';
+      $statusTime.textContent = lastUpdate.toLocaleTimeString('es', { hour: '2-digit', minute: '2-digit' });
+      localStorage.setItem('convRates', JSON.stringify(rates));
+      localStorage.setItem('convRatesTime', lastUpdate.toISOString());
+      convert();
+      updateMulti();
+    } catch (e) {
+      // Try cached
+      const cached = localStorage.getItem('convRates');
+      if (cached) {
+        rates = JSON.parse(cached);
+        const cachedTime = localStorage.getItem('convRatesTime');
+        lastUpdate = cachedTime ? new Date(cachedTime) : null;
+        $statusText.textContent = 'Sin conexión (caché)';
+        $statusTime.textContent = lastUpdate ? lastUpdate.toLocaleDateString('es', { day: '2-digit', month: 'short' }) : '';
+        $statusBar.classList.add('error');
+        convert();
+        updateMulti();
+      } else {
+        $statusText.textContent = 'Error de conexión';
+        $statusBar.classList.add('error');
+      }
+    }
+    scheduleRefresh();
+  }
+
+  function scheduleRefresh() {
+    clearTimeout(refreshTimer);
+    refreshTimer = setTimeout(fetchRates, 3600000); // 1 hour
+  }
+
+  // =================== CONVERSION ===================
+  function getRate(from, to) {
+    if (from === to) return 1;
+    const fromLower = from.toLowerCase();
+    const toLower = to.toLowerCase();
+    // rates are based on USD
+    const fromUSD = rates[fromLower] || 1;
+    const toUSD = rates[toLower] || 1;
+    return toUSD / fromUSD;
+  }
+
+  function convert() {
+    if (!Object.keys(rates).length) return;
+    const val = parseFloat($inputFrom.value) || 0;
+    const rate = getRate(fromCode, toCode);
+    const result = val * rate;
+    $inputTo.value = result ? formatNum(result) : '0.00';
+    $rateText.textContent = `1 ${fromCode} = ${formatNum(rate)} ${toCode}`;
+    updateUI();
+  }
+
+  function formatNum(n) {
+    if (n >= 1000) return n.toLocaleString('es', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    if (n >= 1) return n.toFixed(4).replace(/\.?0+$/, '').replace(/^(\d+\.\d{2})\d*$/, '$1');
+    return n.toFixed(6).replace(/0+$/, '');
+  }
+
+  function updateUI() {
+    const fc = CURRENCIES[fromCode], tc = CURRENCIES[toCode];
+    $flagFrom.textContent = fc.flag;
+    $flagTo.textContent = tc.flag;
+    $nameFrom.textContent = fc.name;
+    $nameTo.textContent = tc.name;
+    // Fav button
+    const isFav = favorites.some(f => f.from === fromCode && f.to === toCode);
+    $btnFav.innerHTML = isFav ? '&#9733;' : '&#9734;';
+    $btnFav.classList.toggle('active', isFav);
+  }
+
+  // =================== HISTORY ===================
+  function addHistory() {
+    const val = parseFloat($inputFrom.value);
+    if (!val || !Object.keys(rates).length) return;
+    const rate = getRate(fromCode, toCode);
+    const result = val * rate;
+    history.unshift({
+      from: fromCode, to: toCode,
+      amount: val, result: result, rate: rate,
+      time: new Date().toLocaleString('es', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })
+    });
+    if (history.length > 10) history.length = 10;
+    localStorage.setItem('convHistory', JSON.stringify(history));
+    renderHistory();
+  }
+
+  function renderHistory() {
+    $historyList.innerHTML = '';
+    $historyEmpty.style.display = history.length ? 'none' : 'block';
+    history.forEach((h, i) => {
+      const li = document.createElement('li');
+      li.className = 'history-item';
+      li.innerHTML = `
+        <div class="history-main">
+          <div class="history-conversion">
+            ${CURRENCIES[h.from]?.flag || ''} ${formatNum(h.amount)} ${h.from}
+            <span class="arrow">→</span>
+            ${CURRENCIES[h.to]?.flag || ''} ${formatNum(h.result)} ${h.to}
+          </div>
+          <div class="history-time">${h.time}</div>
+        </div>
+        <div class="history-rate">1:${formatNum(h.rate)}</div>
+      `;
+      li.addEventListener('click', () => {
+        fromCode = h.from; toCode = h.to;
+        $selectFrom.value = fromCode; $selectTo.value = toCode;
+        $inputFrom.value = h.amount;
+        convert();
+      });
+      $historyList.appendChild(li);
+    });
+  }
+
+  // =================== FAVORITES ===================
+  function toggleFav() {
+    const idx = favorites.findIndex(f => f.from === fromCode && f.to === toCode);
+    if (idx > -1) {
+      favorites.splice(idx, 1);
+    } else {
+      favorites.push({ from: fromCode, to: toCode });
+      if (favorites.length > 8) favorites.shift();
+    }
+    localStorage.setItem('convFavorites', JSON.stringify(favorites));
+    renderFavorites();
+    updateUI();
+  }
+
+  function renderFavorites() {
+    $favCard.style.display = favorites.length ? '' : 'none';
+    $favList.innerHTML = '';
+    favorites.forEach((f, i) => {
+      const chip = document.createElement('div');
+      chip.className = 'fav-chip';
+      chip.innerHTML = `
+        <span class="flags">${CURRENCIES[f.from]?.flag}${CURRENCIES[f.to]?.flag}</span>
+        ${f.from}/${f.to}
+        <button class="fav-remove" data-idx="${i}">&times;</button>
+      `;
+      chip.addEventListener('click', (e) => {
+        if (e.target.classList.contains('fav-remove')) {
+          favorites.splice(parseInt(e.target.dataset.idx), 1);
+          localStorage.setItem('convFavorites', JSON.stringify(favorites));
+          renderFavorites(); updateUI();
+          return;
+        }
+        fromCode = f.from; toCode = f.to;
+        $selectFrom.value = fromCode; $selectTo.value = toCode;
+        convert();
+      });
+      $favList.appendChild(chip);
+    });
+  }
+
+  // =================== MULTI CONVERT ===================
+  function updateMulti() {
+    if (!Object.keys(rates).length) return;
+    const val = parseFloat($inputFrom.value) || 1;
+    $multiGrid.innerHTML = '';
+    CODES.filter(c => c !== fromCode).forEach(code => {
+      const rate = getRate(fromCode, code);
+      const result = val * rate;
+      const div = document.createElement('div');
+      div.className = 'multi-item';
+      div.innerHTML = `
+        <div class="multi-left">
+          <span class="multi-flag">${CURRENCIES[code].flag}</span>
+          <span class="multi-code">${code}</span>
+        </div>
+        <span class="multi-value">${formatNum(result)}</span>
+      `;
+      div.style.cursor = 'pointer';
+      div.addEventListener('click', () => {
+        toCode = code; $selectTo.value = code; convert();
+      });
+      $multiGrid.appendChild(div);
+    });
+  }
+
+  // =================== THEME ===================
+  function applyTheme() {
+    document.body.classList.toggle('dark', darkMode);
+    document.getElementById('btnTheme').innerHTML = darkMode ? '&#9788;' : '&#9789;';
+  }
+
+  // =================== INPUT VALIDATION ===================
+  function sanitizeInput(input) {
+    let val = input.value.replace(/[^0-9.,]/g, '');
+    // Allow only one decimal separator
+    const parts = val.split(/[.,]/);
+    if (parts.length > 2) val = parts[0] + '.' + parts.slice(1).join('');
+    else val = val.replace(',', '.');
+    input.value = val;
+  }
+
+  // =================== EVENTS ===================
+  $inputFrom.addEventListener('input', () => {
+    sanitizeInput($inputFrom);
+    convert();
+    updateMulti();
+  });
+
+  // Save to history on blur or Enter
+  let lastHistoryVal = '';
+  function tryAddHistory() {
+    const key = `${$inputFrom.value}-${fromCode}-${toCode}`;
+    if (key !== lastHistoryVal && parseFloat($inputFrom.value)) {
+      lastHistoryVal = key;
+      addHistory();
+    }
+  }
+  $inputFrom.addEventListener('blur', tryAddHistory);
+  $inputFrom.addEventListener('keydown', e => { if (e.key === 'Enter') { e.target.blur(); } });
+
+  $selectFrom.addEventListener('change', () => {
+    fromCode = $selectFrom.value; convert(); updateMulti();
+  });
+  $selectTo.addEventListener('change', () => {
+    toCode = $selectTo.value; convert();
+  });
+
+  document.getElementById('btnSwap').addEventListener('click', () => {
+    [fromCode, toCode] = [toCode, fromCode];
+    $selectFrom.value = fromCode; $selectTo.value = toCode;
+    const fromVal = $inputTo.value.replace(/\./g, '').replace(',', '.');
+    $inputFrom.value = parseFloat(fromVal) || 1;
+    convert(); updateMulti();
+  });
+
+  $btnFav.addEventListener('click', toggleFav);
+
+  document.getElementById('btnRefresh').addEventListener('click', fetchRates);
+
+  document.getElementById('btnTheme').addEventListener('click', () => {
+    darkMode = !darkMode; applyTheme();
+    localStorage.setItem('convDark', darkMode.toString());
+  });
+
+  document.getElementById('btnClearHistory').addEventListener('click', () => {
+    history = []; localStorage.removeItem('convHistory'); renderHistory();
+  });
+
+  // =================== INIT ===================
+  applyTheme();
+  populateSelects();
+  renderFavorites();
+  renderHistory();
+  fetchRates();
+})();
+</script>
+</body>
+</html>
