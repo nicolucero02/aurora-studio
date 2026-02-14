@@ -242,6 +242,30 @@ input{font-family:inherit;outline:none}
 .h2h-table td,.h2h-table th{padding:8px 10px;font-size:13px;text-align:center;border-bottom:1px solid var(--card-border)}
 .h2h-table th{color:var(--text3);font-size:11px;text-transform:uppercase;letter-spacing:1px}
 
+/* ====== GLOBAL THEME TOGGLE ====== */
+.global-theme-btn{
+  position:fixed;top:14px;right:14px;z-index:80;width:44px;height:44px;border-radius:50%;
+  background:var(--bg2);border:1px solid var(--card-border);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:20px;
+  transition:all .3s;box-shadow:0 4px 16px var(--shadow);
+}
+.global-theme-btn:hover{transform:scale(1.1);border-color:var(--accent);box-shadow:0 6px 24px var(--shadow)}
+.global-theme-btn:active{transform:scale(.95)}
+.global-theme-btn .theme-icon-sun,.global-theme-btn .theme-icon-moon{position:absolute;transition:opacity .3s,transform .3s}
+.global-theme-btn .theme-icon-sun{opacity:0;transform:rotate(-90deg)}
+.global-theme-btn .theme-icon-moon{opacity:1;transform:rotate(0deg)}
+.light .global-theme-btn .theme-icon-sun{opacity:1;transform:rotate(0deg)}
+.light .global-theme-btn .theme-icon-moon{opacity:0;transform:rotate(90deg)}
+
+/* ====== HINT OVERLAY ====== */
+.hint-countdown{position:fixed;inset:0;z-index:95;display:none;align-items:center;justify-content:center;pointer-events:none}
+.hint-countdown.active{display:flex}
+.hint-countdown .hint-num{font-size:80px;font-weight:900;color:var(--accent);text-shadow:0 0 40px rgba(108,99,255,.4);animation:countPop .8s ease}
+
+/* 2P hint info bar */
+.hint-info{display:flex;gap:12px;justify-content:center;align-items:center;padding:6px 0;font-size:13px;font-weight:600;color:var(--text2)}
+.hint-info .hint-count{color:var(--accent);font-weight:700}
+
 /* ====== RESPONSIVE ====== */
 @media(max-width:600px){
   .card-grid.g-4x6{grid-template-columns:repeat(6,1fr);gap:6px;max-width:100%}
@@ -263,6 +287,15 @@ input{font-family:inherit;outline:none}
 </head>
 <body>
 
+<!-- GLOBAL THEME TOGGLE -->
+<button class="global-theme-btn" id="globalThemeBtn" onclick="toggleDarkGlobal()">
+  <span class="theme-icon-sun">&#9728;&#65039;</span>
+  <span class="theme-icon-moon">&#127769;</span>
+</button>
+
+<!-- HINT COUNTDOWN OVERLAY -->
+<div class="hint-countdown" id="hintCountdown"><div class="hint-num" id="hintNum">3</div></div>
+
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
@@ -272,11 +305,12 @@ input{font-family:inherit;outline:none}
 <!-- PAUSE -->
 <div class="pause-overlay" id="pauseOverlay">
   <div class="pause-box">
-    <h2>Pausa</h2>
+    <div style="font-size:40px;margin-bottom:8px">&#9208;</div>
+    <h2>Juego Pausado</h2>
     <div class="p-btns">
-      <button class="r-btn primary" onclick="resumeGame()">Continuar</button>
-      <button class="r-btn" onclick="restartGame()">Reiniciar</button>
-      <button class="r-btn" onclick="goMenu()">Menu</button>
+      <button class="r-btn primary" onclick="resumeGame()">&#9654; Continuar</button>
+      <button class="r-btn" onclick="restartGame()">&#128260; Reiniciar</button>
+      <button class="r-btn" onclick="goMenuFromPause()">&#127968; Menu Principal</button>
     </div>
   </div>
 </div>
@@ -400,6 +434,9 @@ input{font-family:inherit;outline:none}
           <div class="turn-timer-bar" id="ttBar2" style="display:none"><div class="turn-timer-fill" id="ttFill2"></div></div>
         </div>
       </div>
+      <div class="hint-info" id="hintInfo">
+        <span>&#128161; Pistas: <span id="hintsP1Name">J1</span> <span class="hint-count" id="hintsP1">0</span> | <span id="hintsP2Name">J2</span> <span class="hint-count" id="hintsP2">0</span></span>
+      </div>
       <div class="game-header" style="margin-top:8px">
         <div class="game-stat"><span class="icn">&#9201;</span><span class="val" id="g2Timer">00:00</span></div>
         <div class="game-stat"><span class="icn">&#9878;</span>Pares: <span class="val" id="g2Pairs">0</span>/<span id="g2Total">0</span></div>
@@ -414,6 +451,7 @@ input{font-family:inherit;outline:none}
       <button class="g-btn power" id="pwReveal" onclick="usePower('reveal')">&#128065; Revelar</button>
       <button class="g-btn power" id="pwHint" onclick="usePower('hint')">&#128161; Pista</button>
       <button class="g-btn power" id="pwFreeze" onclick="usePower('freeze')">&#10052; Congelar</button>
+      <button class="g-btn power" id="pw2PHint" onclick="use2PHint()" style="display:none">&#128161; Usar Pista (<span id="pw2PHintCount">0</span>)</button>
     </div>
   </div>
 </div>
@@ -538,7 +576,8 @@ const ACHIEVEMENTS = [
   {id:'champ_2p',name:'Campeon',desc:'10 victorias en 2 jugadores',icon:'👑'},
   {id:'points_5k',name:'Millonario',desc:'Consigue 5000 puntos',icon:'💰'},
   {id:'no_powers',name:'Purista',desc:'Gana sin usar power-ups',icon:'✊'},
-  {id:'combo4',name:'Combo Master',desc:'Combo x4 o mayor',icon:'💥'}
+  {id:'combo4',name:'Combo Master',desc:'Combo x4 o mayor',icon:'💥'},
+  {id:'no_hints_2p',name:'Sin Ayuda',desc:'Gana 2P sin usar pistas',icon:'🧿'}
 ];
 
 let game = {};
@@ -566,6 +605,13 @@ function showScreen(id){
 }
 function goMenu(){
   stopGame();
+  document.getElementById('pauseOverlay').classList.remove('active');
+  showScreen('menuScreen');
+}
+function goMenuFromPause(){
+  document.getElementById('pauseOverlay').classList.remove('active');
+  stopGame();
+  game={};
   showScreen('menuScreen');
 }
 
@@ -630,6 +676,8 @@ function start1PGame(){
   document.getElementById('pwReveal').disabled=false;
   document.getElementById('pwHint').disabled=false;
   document.getElementById('pwFreeze').disabled=false;
+  document.getElementById('pw2PHint').style.display='none';
+  document.getElementById('hintInfo').style.display='none';
   update1PHeader();
   generateCards();
   showScreen('gameScreen');
@@ -641,17 +689,26 @@ function start2PGame(){
   const d=DIFF[game.difficulty];
   const n1=document.getElementById('p1Name').value.trim()||'Jugador 1';
   const n2=document.getElementById('p2Name').value.trim()||'Jugador 2';
+  const hintsPerDiff={easy:1,medium:2,hard:3};
+  const hintCount=hintsPerDiff[game.difficulty]||1;
   game={...game,mode:'2p',cards:[],flipped:[],matched:[],totalPairs:d.pairs,timer:0,running:false,paused:false,
-    currentPlayer:0,turnTimerMax:turnTimerMax,turnTimer:turnTimerMax,
+    currentPlayer:0,turnTimerMax:turnTimerMax,turnTimer:turnTimerMax,hintActive:false,
     players:[
-      {name:n1,color:game.p1Color,pairs:0,moves:0,hits:0,combo:0,maxCombo:0},
-      {name:n2,color:game.p2Color,pairs:0,moves:0,hits:0,combo:0,maxCombo:0}
+      {name:n1,color:game.p1Color,pairs:0,moves:0,hits:0,combo:0,maxCombo:0,hints:hintCount,hintsUsed:0},
+      {name:n2,color:game.p2Color,pairs:0,moves:0,hits:0,combo:0,maxCombo:0,hints:hintCount,hintsUsed:0}
     ]};
   document.getElementById('header1P').style.display='none';
   document.getElementById('header2P').style.display='';
   document.getElementById('pwReveal').style.display='none';
   document.getElementById('pwHint').style.display='none';
   document.getElementById('pwFreeze').style.display='none';
+  document.getElementById('pw2PHint').style.display='';
+  // Hint info
+  document.getElementById('hintInfo').style.display='';
+  document.getElementById('hintsP1Name').textContent=n1;
+  document.getElementById('hintsP2Name').textContent=n2;
+  document.getElementById('hintsP1').textContent=hintCount;
+  document.getElementById('hintsP2').textContent=hintCount;
   // Apply colors
   document.getElementById('dot1').style.background=game.p1Color;
   document.getElementById('dot2').style.background=game.p2Color;
@@ -810,7 +867,21 @@ function setActivePlayer(p){
   document.getElementById('pt1').style.display=p===0?'':'none';
   document.getElementById('pt2').style.display=p===1?'':'none';
   if(game.turnTimerMax>0) resetTurnTimer();
+  update2PHintBtn();
   update2PHeader();
+}
+function update2PHintBtn(){
+  if(game.mode!=='2p') return;
+  const p=game.players[game.currentPlayer];
+  const btn=document.getElementById('pw2PHint');
+  const countEl=document.getElementById('pw2PHintCount');
+  countEl.textContent=p.hints;
+  btn.disabled=p.hints<=0;
+  btn.style.borderColor=p.hints>0?p.color:'';
+  btn.style.color=p.hints>0?p.color:'';
+  // Update hint info bar
+  document.getElementById('hintsP1').textContent=game.players[0].hints;
+  document.getElementById('hintsP2').textContent=game.players[1].hints;
 }
 
 // =================== TURN TIMER ===================
@@ -931,6 +1002,60 @@ function usePower(type){
   }
 }
 
+// =================== 2P HINT ===================
+function use2PHint(){
+  if(!game.running||game.paused||game.mode!=='2p'||locked||game.hintActive) return;
+  const p=game.players[game.currentPlayer];
+  if(p.hints<=0) return;
+  p.hints--;
+  p.hintsUsed++;
+  game.hintActive=true;
+  locked=true;
+  playSound('powerup');
+  update2PHintBtn();
+
+  // Pause turn timer during hint
+  if(game.turnTimerMax>0) clearInterval(turnTimerInterval);
+
+  // Flip all unmatched cards with wave animation
+  const cards=document.querySelectorAll('.card');
+  cards.forEach((c,i)=>{
+    if(!c.classList.contains('matched')){
+      setTimeout(()=>c.classList.add('hint'),i*30);
+    }
+  });
+
+  // Countdown 3-2-1
+  const overlay=document.getElementById('hintCountdown');
+  const numEl=document.getElementById('hintNum');
+  overlay.classList.add('active');
+  let count=3;
+  numEl.textContent=count;
+  numEl.style.animation='none';
+  void numEl.offsetWidth;
+  numEl.style.animation='countPop .8s ease';
+
+  const hintIv=setInterval(()=>{
+    count--;
+    if(count>0){
+      numEl.textContent=count;
+      numEl.style.animation='none';
+      void numEl.offsetWidth;
+      numEl.style.animation='countPop .8s ease';
+      playSound('tick');
+    } else {
+      clearInterval(hintIv);
+      overlay.classList.remove('active');
+      // Hide all cards again
+      cards.forEach(c=>c.classList.remove('hint'));
+      game.hintActive=false;
+      locked=false;
+      // Resume turn timer
+      if(game.turnTimerMax>0) resetTurnTimer();
+    }
+  },1000);
+}
+
 // =================== END GAME ===================
 function end1P(){
   game.running=false;
@@ -999,7 +1124,9 @@ function end2P(){
       <div class="rp-stat">${p.moves} movimientos</div>
       <div class="rp-stat">Precision: ${Math.min(100,acc)}%</div>
       <div class="rp-stat">Mejor racha: ${p.maxCombo}</div>
+      <div class="rp-stat">Pistas usadas: ${p.hintsUsed||0}</div>
       ${isW?'<div class="rp-badge" style="background:'+p.color+';color:#fff">GANADOR</div>':''}
+      ${isW&&(p.hintsUsed||0)===0?'<div class="rp-badge" style="background:var(--accent2);color:#fff;margin-top:4px">SIN PISTAS</div>':''}
     `;
     vs.appendChild(div);
   });
@@ -1177,6 +1304,12 @@ function toggleDark(){
   applyDark();
   saveSettings();
 }
+function toggleDarkGlobal(){
+  settings.dark=!settings.dark;
+  document.getElementById('darkToggle').classList.toggle('on',settings.dark);
+  applyDark();
+  saveSettings();
+}
 function applyDark(){document.body.classList.toggle('light',!settings.dark)}
 
 // =================== HIGH SCORES ===================
@@ -1237,6 +1370,8 @@ function checkAchievements1P(acc){
 function checkAchievements2P(winner){
   if(winner>=0){
     unlockAchieve('first_win');
+    const w=game.players[winner];
+    if((w.hintsUsed||0)===0) unlockAchieve('no_hints_2p');
     const gs=getGlobalStats();
     if((gs.wins2p||0)+1>=10) unlockAchieve('champ_2p');
   }
