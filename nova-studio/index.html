@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nova Studio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="navbar">
+        <a class="brand" href="#top">Nova Studio</a>
+        <div class="nav-actions">
+          <button
+            class="toggle-button"
+            type="button"
+            id="language-toggle"
+            aria-label="Cambiar idioma"
+          >
+            ES / EN
+          </button>
+          <button
+            class="toggle-button"
+            type="button"
+            id="theme-toggle"
+            aria-label="Cambiar tema"
+            data-i18n-aria-label="themeToggleAria"
+          >
+            Modo oscuro
+          </button>
+        </div>
+        <button
+          class="menu-toggle"
+          type="button"
+          aria-expanded="false"
+          aria-controls="nav-links"
+          data-i18n="menu"
+        >
+          Men&uacute;
+        </button>
+        <nav class="nav-links" id="nav-links">
+          <a href="#services" data-i18n="navServices">Servicios</a>
+          <a href="#process" data-i18n="navProcess">Proceso</a>
+          <a href="#projects" data-i18n="navProjects">Proyectos</a>
+          <a href="#contact" data-i18n="navContact">Contacto</a>
+        </nav>
+      </header>
+
+      <main>
+        <section class="hero" id="top">
+          <div class="hero-copy">
+            <p class="eyebrow" data-i18n="eyebrow">Estudio digital para marcas en movimiento</p>
+            <h1 data-i18n="heroTitle">
+              Creamos sistemas web claros, premium y listos para crecer.
+            </h1>
+            <p class="subtitle" data-i18n="heroSubtitle">
+              Somos un estudio creativo digital que combina dise&ntilde;o web, landing pages,
+              experimentos con IA y automatizaciones simples para lanzar experiencias &uacute;tiles,
+              modernas y bien construidas.
+            </p>
+            <button
+              class="primary-button"
+              type="button"
+              data-scroll-target="#services"
+              data-i18n="primaryCta"
+            >
+              Ver capacidades
+            </button>
+          </div>
+          <div class="hero-panel" aria-hidden="true">
+            <div class="panel-card floating-card">
+              <span data-i18n="conceptLabel">Laboratorio</span>
+              <strong data-i18n="conceptText">
+                Estrategia visual, prototipos r&aacute;pidos y ejecuci&oacute;n digital con criterio.
+              </strong>
+            </div>
+            <div class="panel-grid">
+              <div class="metric-card">
+                <span data-i18n="metricInterface">Capacidades</span>
+                <strong data-i18n="metricInterfaceValue">Web + IA</strong>
+              </div>
+              <div class="metric-card accent">
+                <span data-i18n="metricResponsive">Entrega</span>
+                <strong data-i18n="metricResponsiveValue">&Aacute;gil</strong>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="features" id="features">
+          <article class="feature-card">
+            <div class="icon-badge" aria-hidden="true">01</div>
+            <h2 data-i18n="featureOneTitle">Dise&ntilde;o web</h2>
+            <p data-i18n="featureOneText">
+              Interfaces limpias, sistemas visuales consistentes y experiencias enfocadas en
+              claridad, ritmo y conversi&oacute;n.
+            </p>
+          </article>
+          <article class="feature-card">
+            <div class="icon-badge" aria-hidden="true">02</div>
+            <h2 data-i18n="featureTwoTitle">Landing pages</h2>
+            <p data-i18n="featureTwoText">
+              P&aacute;ginas de lanzamiento y validaci&oacute;n con narrativa fuerte, estructura modular y CTA
+              visibles.
+            </p>
+          </article>
+          <article class="feature-card">
+            <div class="icon-badge" aria-hidden="true">03</div>
+            <h2 data-i18n="featureThreeTitle">IA y automatizaci&oacute;n</h2>
+            <p data-i18n="featureThreeText">
+              Flujos simples para capturar leads, organizar contenido y acelerar tareas repetitivas.
+            </p>
+          </article>
+        </section>
+
+        <section class="content-section services-section" id="services">
+          <div class="section-heading">
+            <p class="section-label" data-i18n="servicesLabel">Servicios</p>
+            <h2 data-i18n="servicesTitle">Capacidades para marcas, productos y equipos digitales.</h2>
+            <p class="section-intro" data-i18n="servicesIntro">
+              Trabajamos en piezas enfocadas, escalables y f&aacute;ciles de presentar: desde una
+              landing de campa&ntilde;a hasta un sistema liviano de automatizaci&oacute;n.
+            </p>
+          </div>
+          <div class="service-grid">
+            <article class="service-card">
+              <p class="service-index">01</p>
+              <h3 data-i18n="serviceOneTitle">Web design systems</h3>
+              <p data-i18n="serviceOneText">
+                Arquitectura visual, UI modular y direcci&oacute;n creativa para sitios y productos
+                digitales.
+              </p>
+            </article>
+            <article class="service-card">
+              <p class="service-index">02</p>
+              <h3 data-i18n="serviceTwoTitle">Landing pages premium</h3>
+              <p data-i18n="serviceTwoText">
+                Concepto, copy estructural, prototipo y desarrollo liviano para lanzamientos y
+                campa&ntilde;as.
+              </p>
+            </article>
+            <article class="service-card">
+              <p class="service-index">03</p>
+              <h3 data-i18n="serviceThreeTitle">Experimentos con IA</h3>
+              <p data-i18n="serviceThreeText">
+                Interfaces y pruebas funcionales que exploran prompts, asistentes y experiencias
+                generativas.
+              </p>
+            </article>
+            <article class="service-card">
+              <p class="service-index">04</p>
+              <h3 data-i18n="serviceFourTitle">Automatizaciones simples</h3>
+              <p data-i18n="serviceFourText">
+                Flujos &uacute;tiles para formularios, respuestas, bases de datos ligeras y operaciones
+                repetitivas.
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <section class="content-section process-section" id="process">
+          <div class="section-heading">
+            <p class="section-label" data-i18n="processLabel">Proceso</p>
+            <h2 data-i18n="processTitle">Un proceso corto, claro y orientado a decisiones reales.</h2>
+          </div>
+          <div class="process-grid">
+            <article class="process-step">
+              <span class="step-number">01</span>
+              <h3 data-i18n="processOneTitle">Direcci&oacute;n</h3>
+              <p data-i18n="processOneText">
+                Alineamos contexto, objetivos, referencias y alcance para definir una base clara.
+              </p>
+            </article>
+            <article class="process-step">
+              <span class="step-number">02</span>
+              <h3 data-i18n="processTwoTitle">Sistema</h3>
+              <p data-i18n="processTwoText">
+                Construimos estructura, lenguaje visual y componentes para que la propuesta tenga
+                coherencia.
+              </p>
+            </article>
+            <article class="process-step">
+              <span class="step-number">03</span>
+              <h3 data-i18n="processThreeTitle">Prototipo</h3>
+              <p data-i18n="processThreeText">
+                Bajamos la idea a una versi&oacute;n navegable para validar narrativa, ritmo y prioridad.
+              </p>
+            </article>
+            <article class="process-step">
+              <span class="step-number">04</span>
+              <h3 data-i18n="processFourTitle">Entrega</h3>
+              <p data-i18n="processFourText">
+                Refinamos detalles, activamos interacciones y dejamos una base lista para iterar.
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <section class="content-section projects-section" id="projects">
+          <div class="section-heading">
+            <p class="section-label" data-i18n="projectsLabel">Ejemplos</p>
+            <h2 data-i18n="projectsTitle">Tipos de proyectos que encajan con este estudio.</h2>
+          </div>
+          <div class="project-grid">
+            <article class="project-card">
+              <p class="project-tag" data-i18n="projectOneTag">Lanzamiento</p>
+              <h3 data-i18n="projectOneTitle">Landing para producto emergente</h3>
+              <p data-i18n="projectOneText">
+                Una p&aacute;gina de alto impacto para presentar propuesta, beneficios y registro temprano.
+              </p>
+            </article>
+            <article class="project-card">
+              <p class="project-tag" data-i18n="projectTwoTag">Sistema</p>
+              <h3 data-i18n="projectTwoTitle">Sitio editorial para marca digital</h3>
+              <p data-i18n="projectTwoText">
+                Un ecosistema de bloques para comunicar servicios, casos y contenido con consistencia.
+              </p>
+            </article>
+            <article class="project-card">
+              <p class="project-tag" data-i18n="projectThreeTag">Experimento</p>
+              <h3 data-i18n="projectThreeTitle">Prototipo con IA aplicada</h3>
+              <p data-i18n="projectThreeText">
+                Una experiencia ligera para probar automatizaci&oacute;n, asistencia contextual y flujos
+                de entrada.
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <section class="closing-section" id="contact">
+          <div>
+            <p class="section-label" data-i18n="closingLabel">Contacto</p>
+            <h2 data-i18n="closingTitle">
+              Dise&ntilde;amos presencia digital con criterio visual, estructura y velocidad.
+            </h2>
+          </div>
+          <div class="closing-actions">
+            <p data-i18n="closingText">
+              Si necesitas una landing, una interfaz clara o una prueba con IA que se vea seria
+              desde el d&iacute;a uno, esta base ya comunica ese posicionamiento.
+            </p>
+            <button
+              class="secondary-button"
+              type="button"
+              data-scroll-target="#services"
+              data-i18n="secondaryCta"
+            >
+              Explorar servicios
+            </button>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
