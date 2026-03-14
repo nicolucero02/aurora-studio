@@ -190,6 +190,7 @@ section { padding: 100px 0; }
 .project-card:nth-child(4)::before { background: linear-gradient(135deg, var(--glow2), transparent 60%); }
 .project-card:nth-child(5)::before { background: linear-gradient(135deg, var(--glow1), transparent 60%); }
 .project-card:nth-child(6)::before { background: linear-gradient(135deg, var(--glow3), transparent 60%); }
+.project-card:nth-child(7)::before { background: linear-gradient(135deg, var(--glow2), transparent 60%); }
 .project-card:hover::before { opacity: 1; }
 
 .project-preview {
@@ -232,6 +233,11 @@ section { padding: 100px 0; }
 .project-link:hover { gap: 12px; }
 .project-link .arrow { transition: transform 0.3s; }
 .project-link:hover .arrow { transform: translateX(4px); }
+
+.contact-desc {
+  color: var(--text2); font-size: 16px; max-width: 540px;
+  margin-bottom: 32px; line-height: 1.7; white-space: pre-line;
+}
 
 /* Tech section */
 .tech-grid {
@@ -440,6 +446,26 @@ footer {
           </a>
         </div>
       </div>
+
+      <!-- Relax Sounds -->
+      <div class="project-card reveal">
+        <div class="project-preview">
+          <div class="preview-bg" style="background:linear-gradient(135deg,#2a9d8f,#264653)"></div>
+          <!-- Reemplazar este emoji por una captura de Relax Sounds cuando la miniatura este lista. -->
+          <span class="emoji">🎧</span>
+        </div>
+        <div class="project-info">
+          <div class="project-num c2" data-i18n="proj7Label">07 — LANDING PAGE</div>
+          <h3 class="project-name" data-i18n="proj7Name">Relax Sounds</h3>
+          <p class="project-desc" data-i18n="proj7Desc">Sitio web para presentar una biblioteca de ambientes relajantes con acceso al canal de YouTube y secciones tematicas como oceano, lluvia y cafeteria.</p>
+          <div class="project-tags">
+            <span class="tag">Web</span><span class="tag">YouTube</span><span class="tag">Relax</span><span class="tag">Landing Page</span>
+          </div>
+          <a href="https://nicolucero02.github.io/mis-proyectos/relax-landing/" class="project-link" target="_blank" rel="noreferrer">
+            <span data-i18n="viewProject">Ver proyecto</span> <span class="arrow">&#8594;</span>
+          </a>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -485,8 +511,9 @@ footer {
   <section id="contacto">
     <div class="section-label reveal" data-i18n="navContact">Contacto</div>
     <h2 class="section-title reveal" data-i18n="contactTitle">Hablemos</h2>
-    <p class="reveal" style="color:var(--text2);font-size:16px;max-width:500px;margin-bottom:32px;line-height:1.7" data-i18n="contactDesc">
-      ¿Tienes un proyecto en mente o simplemente quieres saludar? No dudes en escribirme.
+    <p class="contact-desc reveal" data-i18n="contactDesc">
+      ¿Tienes un proyecto en mente o simplemente quieres saludar?
+      No dudes en escribirme.
     </p>
     <div class="reveal" style="display:flex;gap:12px;flex-wrap:wrap">
       <a href="mailto:neldosmil@gmail.com" class="cta-btn cta-primary" style="text-decoration:none" data-i18n="contactEmail">Enviar email</a>
@@ -529,12 +556,15 @@ const i18n = {
     proj5Desc: 'Selector de color avanzado con rueda visual, formatos HEX/RGB/HSL/CMYK, paletas automáticas, eyedropper y colores guardados.',
     proj6Label: '06 — JUEGO',
     proj6Desc: 'Juego de memoria con modo 1 y 2 jugadores, 3 dificultades, 6 temas de cartas, combos, power-ups, logros y competitivo por turnos.',
+    proj7Label: '07 — LANDING PAGE',
+    proj7Name: 'Relax Sounds',
+    proj7Desc: 'Sitio web para presentar una biblioteca de ambientes relajantes con acceso al canal de YouTube y secciones tematicas como oceano, lluvia y cafeteria.',
     viewProject: 'Ver proyecto',
     sectionTech: 'Tecnologías', sectionTechTitle: 'Stack utilizado',
     techStructure: 'Estructura', techStyles: 'Estilos', techLogic: 'Lógica',
     techGraphics: 'Gráficos', techSound: 'Sonido', techData: 'Datos',
     contactTitle: 'Hablemos',
-    contactDesc: '¿Tienes un proyecto en mente o simplemente quieres saludar? No dudes en escribirme.',
+    contactDesc: '¿Tienes un proyecto en mente o simplemente quieres saludar?\nNo dudes en escribirme.',
     contactEmail: 'Enviar email',
     footerCopy: 'Hecho con código y creatividad — 2026',
   },
@@ -557,12 +587,15 @@ const i18n = {
     proj5Desc: 'Advanced color picker with visual wheel, HEX/RGB/HSL/CMYK formats, auto-generated palettes, eyedropper and saved colors.',
     proj6Label: '06 — GAME',
     proj6Desc: 'Memory game with 1P and 2P modes, 3 difficulties, 6 card themes, combos, power-ups, achievements and competitive turn-based play.',
+    proj7Label: '07 — LANDING PAGE',
+    proj7Name: 'Relax Sounds',
+    proj7Desc: 'Website presenting a library of relaxing ambiences with access to the YouTube channel and themed sections such as ocean, rain and cafe.',
     viewProject: 'View project',
     sectionTech: 'Technologies', sectionTechTitle: 'Tech stack',
     techStructure: 'Structure', techStyles: 'Styling', techLogic: 'Logic',
     techGraphics: 'Graphics', techSound: 'Sound', techData: 'Storage',
     contactTitle: "Let's talk",
-    contactDesc: "Have a project in mind or just want to say hello? Don't hesitate to reach out.",
+    contactDesc: "Have a project in mind or just want to say hello?\nDon't hesitate to reach out.",
     contactEmail: 'Send email',
     footerCopy: 'Made with code and creativity — 2026',
   }
