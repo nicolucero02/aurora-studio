@@ -501,8 +501,8 @@ h1 {
 }
 
 .contact-section {
-  margin-top: 20px;
-  padding: 28px 32px;
+  margin-top: 28px;
+  padding: 30px 32px;
   border: 1px solid var(--panel-border);
   border-radius: 30px;
   background: var(--panel);
@@ -515,10 +515,12 @@ h1 {
 .contact-section__copy {
   display: flex;
   flex-direction: column;
+  max-width: 640px;
+  gap: 0;
 }
 
 .contact-section__eyebrow {
-  margin: 0;
+  margin: 0 0 10px;
   color: var(--accent);
   font-size: 0.8rem;
   font-weight: 800;
@@ -526,11 +528,24 @@ h1 {
   text-transform: uppercase;
 }
 
+.contact-section h2 {
+  margin: 0;
+  font-size: clamp(1.8rem, 3.4vw, 2.5rem);
+  line-height: 1.05;
+}
+
+.contact-section__text {
+  margin: 14px 0 0;
+  color: var(--muted);
+  line-height: 1.75;
+}
+
 .contact-section__actions {
   display: flex;
   flex-wrap: wrap;
+  align-items: flex-start;
   gap: 12px;
-  margin-top: 16px;
+  margin-top: 22px;
   justify-content: flex-start;
 }
 
@@ -842,7 +857,7 @@ h1 {
   }
 
   .contact-section {
-    margin-top: 16px;
+    margin-top: 18px;
     padding: 24px 18px;
     border-radius: 24px;
   }
