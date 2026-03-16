@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="BMI Calc: calculadora de IMC moderna, visual y lista para publicar en GitHub Pages.">
+  <title>BMI Calc</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <div class="hero-copy">
+        <div class="topbar">
+          <div class="toggle-group" aria-label="Selector de idioma">
+            <button id="lang-es" class="toggle-chip" type="button" data-language="es">ES</button>
+            <span class="toggle-separator">/</span>
+            <button id="lang-en" class="toggle-chip" type="button" data-language="en">EN</button>
+          </div>
+          <div class="toggle-group" aria-label="Selector de tema">
+            <button id="theme-light" class="toggle-chip" type="button" data-theme="light">Claro</button>
+            <span class="toggle-separator">/</span>
+            <button id="theme-dark" class="toggle-chip" type="button" data-theme="dark">Oscuro</button>
+          </div>
+        </div>
+
+        <p class="eyebrow" data-i18n="heroEyebrow">Health metric experience</p>
+        <h1>BMI Calc</h1>
+        <p class="hero-subtitle" data-i18n="heroSubtitle">
+          Una calculadora de IMC con look premium para entender tu rango corporal de forma clara, visual y rápida.
+        </p>
+      </div>
+      <div class="hero-card">
+        <h2 class="hero-card-title" data-i18n="heroCardLabel">¿Qué es el BMI?</h2>
+        <p data-i18n="heroCardText">
+          El Body Mass Index o IMC estima la relación entre peso y altura. Es una referencia útil para detectar si estás
+          por debajo, dentro o por encima del rango habitual.
+        </p>
+      </div>
+    </header>
+
+    <main class="app-grid">
+      <section class="panel form-panel">
+        <div class="panel-header">
+          <h2 data-i18n="calculatorTitle">Calculadora</h2>
+          <p data-i18n="calculatorText">Ingresá tus datos para obtener el cálculo y una lectura visual de tu resultado.</p>
+        </div>
+
+        <form id="bmi-form" class="bmi-form" novalidate>
+          <label class="input-group">
+            <span data-i18n="heightLabel">Altura</span>
+            <div class="input-wrap">
+              <input id="height" name="height" type="number" min="1.20" max="2.30" step="0.01" placeholder="1.72" required>
+              <span class="input-unit" data-i18n="meterUnit">m</span>
+            </div>
+          </label>
+
+          <label class="input-group">
+            <span data-i18n="weightLabel">Peso</span>
+            <div class="input-wrap">
+              <input id="weight" name="weight" type="number" min="20" max="300" step="1" placeholder="Ingresa tu peso" required>
+              <span class="input-unit" data-i18n="kgUnit">kg</span>
+            </div>
+          </label>
+
+          <button class="primary-button" type="submit" data-i18n="calculateButton">Calcular BMI</button>
+          <p id="form-message" class="form-message" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <section class="panel result-panel">
+        <div class="panel-header">
+          <h2 data-i18n="resultTitle">Resultado</h2>
+          <p data-i18n="resultText">Tu BMI, tu clasificación y tu peso ideal estimado aparecen aquí.</p>
+        </div>
+
+        <div id="result-card" class="result-card is-empty" aria-live="polite">
+          <div class="result-top">
+            <span id="result-badge" class="status-badge neutral" data-i18n="waitingData">Esperando datos</span>
+            <p class="result-label">BMI</p>
+            <p id="result-value" class="result-value">--</p>
+          </div>
+
+          <div class="scale-card">
+            <div class="scale-header">
+              <span data-i18n="visualScale">Escala visual</span>
+              <span id="scale-status" data-i18n="notCalculated">Sin calcular</span>
+            </div>
+            <div class="bmi-scale" aria-hidden="true">
+              <div class="scale-band">
+                <div class="scale-zones">
+                  <span class="zone underweight" data-i18n="underweightShort">Bajo</span>
+                  <span class="zone healthy" data-i18n="healthyShort">Normal</span>
+                  <span class="zone overweight" data-i18n="overweightShort">Sobrepeso</span>
+                  <span class="zone obesity" data-i18n="obesityShort">Obesidad</span>
+                </div>
+                <div class="scale-marker-track">
+                  <div id="scale-marker" class="scale-marker"></div>
+                </div>
+              </div>
+              <div class="scale-axis">
+                <span class="tick tick-start">16</span>
+                <span class="tick tick-185">18.5</span>
+                <span class="tick tick-25">25</span>
+                <span class="tick tick-30">30</span>
+                <span class="tick tick-end">40+</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="result-metrics">
+            <article class="metric-card">
+              <span class="metric-label" data-i18n="classificationLabel">Clasificación</span>
+              <strong id="result-category">--</strong>
+            </article>
+            <article class="metric-card accent">
+              <span class="metric-label" data-i18n="idealWeightLabel">Peso ideal estimado</span>
+              <strong id="ideal-weight">-- kg</strong>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel guide-panel">
+        <div class="panel-header">
+          <h2 data-i18n="guideTitle">Guía de referencia BMI</h2>
+          <p data-i18n="guideText">Una lectura rápida de los puntos clave que usa la escala visual del resultado.</p>
+        </div>
+
+        <div class="guide-table" role="table" aria-label="Guía de referencia BMI">
+          <div class="guide-row guide-row-head" role="row">
+            <span role="columnheader" data-i18n="guideValue">Valor</span>
+            <span role="columnheader" data-i18n="guideMeaning">Significado</span>
+          </div>
+          <div class="guide-row" role="row">
+            <strong role="cell">16</strong>
+            <span role="cell" data-i18n="scaleGuide16">inicio visual de la escala</span>
+          </div>
+          <div class="guide-row" role="row">
+            <strong role="cell">18.5</strong>
+            <span role="cell" data-i18n="scaleGuide185">desde acá deja de ser bajo peso</span>
+          </div>
+          <div class="guide-row" role="row">
+            <strong role="cell">25</strong>
+            <span role="cell" data-i18n="scaleGuide25">desde acá empieza sobrepeso</span>
+          </div>
+          <div class="guide-row" role="row">
+            <strong role="cell">30</strong>
+            <span role="cell" data-i18n="scaleGuide30">desde acá empieza obesidad</span>
+          </div>
+          <div class="guide-row" role="row">
+            <strong role="cell">40+</strong>
+            <span role="cell" data-i18n="scaleGuide40">parte alta de la escala visual</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel history-panel">
+        <div class="panel-header">
+          <h2 data-i18n="historyTitle">Historial reciente</h2>
+          <p data-i18n="historyText">Los últimos cálculos se guardan en tu navegador para que puedas compararlos.</p>
+        </div>
+
+        <div id="history-list" class="history-list">
+          <p class="history-empty" data-i18n="historyEmpty">Todavía no hay cálculos guardados.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
