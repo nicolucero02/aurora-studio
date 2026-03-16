@@ -9,7 +9,7 @@ export function SectionHeading({
 }) {
   return (
     <div className="space-y-3">
-      <p className="text-xs font-semibold uppercase tracking-[0.32em] text-coral">
+      <p className="text-xs font-semibold uppercase tracking-[0.32em] text-brand">
         {eyebrow}
       </p>
       <h2 className="section-title">{title}</h2>

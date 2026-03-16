@@ -1,17 +1,21 @@
+"use client";
+
+import { useAppPreferences } from "@/components/app-provider";
 import { InfoCard } from "@/components/cards";
 import { SectionHeading } from "@/components/section-heading";
-import { articles } from "@/data/content";
 
 export default function ArticlesPage() {
+  const { t } = useAppPreferences();
+
   return (
     <div className="space-y-8">
       <SectionHeading
-        eyebrow="Articles"
-        title="Short-form content for programming, nutrition and recovery."
-        copy="The article cards are mock content, but the structure is ready for category pages or dynamic routes."
+        eyebrow={t.pages.articles.eyebrow}
+        title={t.pages.articles.title}
+        copy={t.pages.articles.copy}
       />
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {articles.map((article) => (
+        {t.articles.map((article) => (
           <InfoCard
             key={article.title}
             title={article.title}

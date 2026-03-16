@@ -1,17 +1,21 @@
+"use client";
+
+import { useAppPreferences } from "@/components/app-provider";
 import { InfoCard } from "@/components/cards";
 import { SectionHeading } from "@/components/section-heading";
-import { exercises } from "@/data/content";
 
 export default function ExercisesPage() {
+  const { t } = useAppPreferences();
+
   return (
     <div className="space-y-8">
       <SectionHeading
-        eyebrow="Exercises"
-        title="Movement library for strength, muscle and control."
-        copy="Mock exercise data designed for browsing, filtering and future API integration."
+        eyebrow={t.pages.exercises.eyebrow}
+        title={t.pages.exercises.title}
+        copy={t.pages.exercises.copy}
       />
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {exercises.map((exercise) => (
+        {t.exercises.map((exercise) => (
           <InfoCard
             key={exercise.name}
             title={exercise.name}

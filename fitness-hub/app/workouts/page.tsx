@@ -1,17 +1,21 @@
+"use client";
+
+import { useAppPreferences } from "@/components/app-provider";
 import { InfoCard } from "@/components/cards";
 import { SectionHeading } from "@/components/section-heading";
-import { workouts } from "@/data/content";
 
 export default function WorkoutsPage() {
+  const { t } = useAppPreferences();
+
   return (
     <div className="space-y-8">
       <SectionHeading
-        eyebrow="Workouts"
-        title="Training plans with clear goals and time commitment."
-        copy="Each mock plan is structured so you can later replace the local content with CMS or API-backed data."
+        eyebrow={t.pages.workouts.eyebrow}
+        title={t.pages.workouts.title}
+        copy={t.pages.workouts.copy}
       />
       <section className="grid gap-4 md:grid-cols-2">
-        {workouts.map((workout) => (
+        {t.workouts.map((workout) => (
           <InfoCard
             key={workout.title}
             title={workout.title}

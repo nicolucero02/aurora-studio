@@ -1,16 +1,20 @@
+"use client";
+
 import Link from "next/link";
+import { useAppPreferences } from "@/components/app-provider";
 import { Hero } from "@/components/hero";
 import { InfoCard, MetricCard } from "@/components/cards";
 import { SectionHeading } from "@/components/section-heading";
-import { articles, exercises, featuredStats, workouts } from "@/data/content";
 
 export default function HomePage() {
+  const { t } = useAppPreferences();
+
   return (
     <div className="space-y-10 sm:space-y-14">
       <Hero />
 
       <section className="grid gap-4 md:grid-cols-3">
-        {featuredStats.map((stat) => (
+        {t.stats.map((stat) => (
           <MetricCard
             key={stat.label}
             label={stat.label}
@@ -22,52 +26,30 @@ export default function HomePage() {
 
       <section className="space-y-6">
         <SectionHeading
-          eyebrow="Explore"
-          title="Everything you need for training in one place."
-          copy="A compact overview of the exercise library, training plans and articles available in this starter project."
+          eyebrow={t.home.exploreEyebrow}
+          title={t.home.exploreTitle}
+          copy={t.home.exploreCopy}
         />
         <div className="grid gap-4 lg:grid-cols-3">
-          {[
-            {
-              title: "Exercises",
-              description: `${exercises.length} mock exercise entries with categories, muscles and skill level.`,
-              badge: "Library",
-              meta: "Browse movements",
-            },
-            {
-              title: "Workouts",
-              description: `${workouts.length} sample programs for strength, hypertrophy and general fitness.`,
-              badge: "Plans",
-              meta: "Follow routines",
-            },
-            {
-              title: "Articles",
-              description: `${articles.length} fitness reads covering programming, nutrition and recovery.`,
-              badge: "Learn",
-              meta: "Read practical guides",
-            },
-          ].map((item) => (
+          {t.home.highlights.map((item) => (
             <InfoCard key={item.title} {...item} />
           ))}
         </div>
       </section>
 
-      <section className="panel grid gap-6 p-8 lg:grid-cols-[1fr_auto] lg:items-center">
+      <section className="panel grid gap-6 overflow-hidden p-8 lg:grid-cols-[1fr_auto] lg:items-center">
         <div className="space-y-3">
-          <p className="text-xs font-semibold uppercase tracking-[0.32em] text-coral">
-            Tools
+          <p className="text-xs font-semibold uppercase tracking-[0.32em] text-brand">
+            {t.home.toolsEyebrow}
           </p>
-          <h2 className="section-title">Check your BMI and track basic metrics.</h2>
-          <p className="section-copy">
-            The calculators section includes a ready-to-use BMI calculator built with
-            client-side interactivity.
-          </p>
+          <h2 className="section-title">{t.home.toolsTitle}</h2>
+          <p className="section-copy">{t.home.toolsCopy}</p>
         </div>
         <Link
           href="/calculators"
-          className="rounded-full bg-ink px-6 py-3 text-sm font-medium text-white transition hover:bg-slate-800"
+          className="rounded-full bg-brand px-6 py-3 text-sm font-medium text-slate-950 transition hover:translate-y-[-1px] hover:bg-emerald-400"
         >
-          Open Calculators
+          {t.home.toolsCta}
         </Link>
       </section>
     </div>

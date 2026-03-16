@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { AppProvider } from "@/components/app-provider";
 import { SiteShell } from "@/components/site-shell";
 
 export const metadata: Metadata = {
@@ -13,9 +14,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body>
-        <SiteShell>{children}</SiteShell>
+        <AppProvider>
+          <SiteShell>{children}</SiteShell>
+        </AppProvider>
       </body>
     </html>
   );

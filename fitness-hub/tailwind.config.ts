@@ -1,6 +1,7 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
+  darkMode: "class",
   content: [
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -9,18 +10,17 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        ink: "#0f172a",
-        sand: "#f8fafc",
-        coral: "#ff6b57",
-        mint: "#7dd3c7",
-        gold: "#fbbf24",
+        brand: "#22C55E",
+        accent: "#06B6D4",
+        energy: "#F59E0B",
+        ink: "#0F172A",
       },
       boxShadow: {
-        panel: "0 20px 50px rgba(15, 23, 42, 0.12)",
+        panel: "0 20px 60px rgba(15, 23, 42, 0.16)",
       },
       backgroundImage: {
         "hero-glow":
-          "radial-gradient(circle at top left, rgba(251, 191, 36, 0.35), transparent 30%), radial-gradient(circle at top right, rgba(125, 211, 199, 0.3), transparent 25%), linear-gradient(135deg, #fff7ed 0%, #ffffff 42%, #eff6ff 100%)",
+          "radial-gradient(circle at top left, rgba(34, 197, 94, 0.22), transparent 28%), radial-gradient(circle at top right, rgba(6, 182, 212, 0.2), transparent 24%), radial-gradient(circle at center right, rgba(245, 158, 11, 0.14), transparent 24%)",
       },
       keyframes: {
         float: {
