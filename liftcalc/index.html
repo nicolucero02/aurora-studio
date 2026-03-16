@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LiftCalc</title>
+    <meta
+      name="description"
+      content="LiftCalc is a premium strength training toolkit with 1RM, plate loading, training percentage and BMI calculators."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="site-glow" aria-hidden="true"></div>
+    <div class="app-shell">
+      <header class="hero">
+        <nav class="topbar">
+          <div class="brand">
+            <span class="brand-mark">LC</span>
+            <div>
+              <p class="brand-name">LiftCalc</p>
+              <p class="brand-tag" data-i18n="heroTag">Strength tools for lifters</p>
+            </div>
+          </div>
+          <div class="topbar-actions">
+            <button class="language-toggle" id="languageToggle" type="button" aria-label="Change language" title="Language">
+              <span class="language-option" data-lang-option="es">ES</span>
+              <span class="language-separator" aria-hidden="true">/</span>
+              <span class="language-option" data-lang-option="en">EN</span>
+            </button>
+            <button class="icon-button" id="themeToggle" type="button" aria-label="Toggle theme" title="Theme">
+              <span id="themeIcon" aria-hidden="true">🌙</span>
+            </button>
+          </div>
+        </nav>
+
+        <section class="hero-grid">
+          <div class="hero-copy">
+            <p class="eyebrow" data-i18n="eyebrow">Precision for every set</p>
+            <h1 data-i18n="heroTitle">Train heavier with cleaner numbers.</h1>
+            <p class="hero-text" data-i18n="heroText">
+              Calculate your estimated max, load the bar correctly, check BMI and plan training percentages from one focused dashboard.
+            </p>
+            <div class="hero-actions">
+              <a class="primary-button" href="#tools" data-i18n="heroPrimary">Open calculators</a>
+              <a class="secondary-button" href="#history" data-i18n="heroSecondary">Recent history</a>
+            </div>
+          </div>
+
+          <div class="hero-panel">
+            <div class="stat-card">
+              <p class="stat-label" data-i18n="stat1Label">Estimated 1RM</p>
+              <p class="stat-value" id="heroOneRm">0.0</p>
+              <p class="stat-unit" id="heroUnit">kg</p>
+            </div>
+            <div class="stat-strip">
+              <div>
+                <p class="stat-strip-label" data-i18n="stat2Label">Suggested working set</p>
+                <p class="stat-strip-value" id="heroWorkingSet">0.0</p>
+              </div>
+              <div>
+                <p class="stat-strip-label" data-i18n="stat3Label">BMI status</p>
+                <p class="stat-strip-value" id="heroBmiStatus">Normal</p>
+              </div>
+            </div>
+            <div class="hero-badges">
+              <span data-i18n="badge1">1RM</span>
+              <span data-i18n="badge2">Plates</span>
+              <span data-i18n="badge3">Percentages</span>
+              <span data-i18n="badge4">BMI</span>
+            </div>
+          </div>
+        </section>
+      </header>
+
+      <main>
+        <section class="feature-strip">
+          <article>
+            <p class="feature-kicker" data-i18n="feature1Kicker">Fast</p>
+            <h2 data-i18n="feature1Title">Built for gym use</h2>
+            <p data-i18n="feature1Text">Large inputs, immediate results and saved history for your next session.</p>
+          </article>
+          <article>
+            <p class="feature-kicker" data-i18n="feature2Kicker">Practical</p>
+            <h2 data-i18n="feature2Title">Useful loading output</h2>
+            <p data-i18n="feature2Text">Know exactly which plates to load on each side in kilograms or pounds.</p>
+          </article>
+          <article>
+            <p class="feature-kicker" data-i18n="feature3Kicker">Adaptive</p>
+            <h2 data-i18n="feature3Title">App-like workflow</h2>
+            <p data-i18n="feature3Text">Switch tools from a single panel, keep your language and theme preferences saved.</p>
+          </article>
+        </section>
+
+        <section class="tools-section" id="tools">
+          <div class="section-heading">
+            <p class="eyebrow" data-i18n="toolsEyebrow">Core calculators</p>
+            <h2 data-i18n="toolsTitle">Four tools. One lifting workflow.</h2>
+          </div>
+
+          <div class="tools-panel">
+            <div class="tools-toolbar">
+              <div class="tab-list" role="tablist" aria-label="LiftCalc tools">
+                <button class="tool-tab is-active" data-tool="rm" role="tab" type="button">1RM</button>
+                <button class="tool-tab" data-tool="plate" role="tab" type="button" data-i18n="plateTab">Plates</button>
+                <button class="tool-tab" data-tool="training" role="tab" type="button" data-i18n="trainingTab">Percentages</button>
+                <button class="tool-tab" data-tool="bmi" role="tab" type="button">BMI</button>
+              </div>
+              <div class="segmented-control" role="group" aria-label="Unit selector">
+                <button class="segment is-active" data-unit="kg" type="button">kg</button>
+                <button class="segment" data-unit="lb" type="button">lb</button>
+              </div>
+            </div>
+
+            <div class="tool-panels">
+              <article class="card tool-card is-active" data-panel="rm">
+                <div class="card-header">
+                  <div>
+                    <p class="card-kicker">01</p>
+                    <h3 data-i18n="rmTitle">1RM Calculator</h3>
+                  </div>
+                  <span class="card-chip" data-i18n="rmChip">Strength estimate</span>
+                </div>
+
+                <form id="oneRmForm" class="calculator-form">
+                  <label>
+                    <span data-i18n="weightLabel">Weight lifted</span>
+                    <div class="input-row">
+                      <input id="liftWeight" name="weight" type="number" min="0" step="0.5" value="100" />
+                      <span class="unit-badge" id="weightUnitLabel">kg</span>
+                    </div>
+                  </label>
+                  <label>
+                    <span data-i18n="repsLabel">Repetitions</span>
+                    <input id="liftReps" name="reps" type="number" min="1" max="20" step="1" value="5" />
+                  </label>
+                </form>
+
+                <div class="result-panel">
+                  <p class="result-label" data-i18n="rmResultLabel">Estimated one-rep max</p>
+                  <p class="result-value"><span id="oneRmResult">116.7</span> <span id="oneRmUnit">kg</span></p>
+                </div>
+
+                <div class="table-card">
+                  <div class="table-header">
+                    <h4 data-i18n="loadTableTitle">Load percentage table</h4>
+                  </div>
+                  <div class="percentage-table" id="loadTable"></div>
+                </div>
+              </article>
+
+              <article class="card tool-card" data-panel="plate">
+                <div class="card-header">
+                  <div>
+                    <p class="card-kicker">02</p>
+                    <h3 data-i18n="plateTitle">Plate Calculator</h3>
+                  </div>
+                  <span class="card-chip" data-i18n="plateChip">Bar loading</span>
+                </div>
+
+                <form id="plateForm" class="calculator-form">
+                  <label>
+                    <span data-i18n="targetWeightLabel">Target weight</span>
+                    <div class="input-row">
+                      <input id="targetWeight" name="targetWeight" type="number" min="0" step="0.5" value="100" />
+                      <span class="unit-badge" id="targetUnitLabel">kg</span>
+                    </div>
+                  </label>
+                  <label>
+                    <span data-i18n="barWeightLabel">Bar weight</span>
+                    <div class="input-row">
+                      <input id="barWeight" name="barWeight" type="number" min="0" step="0.5" value="20" />
+                      <span class="unit-badge" id="barUnitLabel">kg</span>
+                    </div>
+                  </label>
+                </form>
+
+                <div class="plate-layout">
+                  <div class="result-panel">
+                    <p class="result-label" data-i18n="platesPerSideLabel">Plates per side</p>
+                    <p class="result-value" id="platesPerSide">40.0 kg</p>
+                  </div>
+                  <div class="plate-output" id="plateOutput"></div>
+                  <p class="helper-text" id="plateHelper"></p>
+                </div>
+              </article>
+
+              <article class="card tool-card" data-panel="training">
+                <div class="card-header">
+                  <div>
+                    <p class="card-kicker">03</p>
+                    <h3 data-i18n="trainingTitle">Training Percentages</h3>
+                  </div>
+                  <span class="card-chip" data-i18n="trainingChip">Programming aid</span>
+                </div>
+
+                <form id="percentagesForm" class="calculator-form">
+                  <label>
+                    <span data-i18n="baseOneRmLabel">Base 1RM</span>
+                    <div class="input-row">
+                      <input id="baseOneRm" name="baseOneRm" type="number" min="0" step="0.5" value="120" />
+                      <span class="unit-badge" id="trainingUnitLabel">kg</span>
+                    </div>
+                  </label>
+                </form>
+
+                <div class="table-card">
+                  <div class="table-header">
+                    <h4 data-i18n="trainingTableTitle">Suggested training weights</h4>
+                  </div>
+                  <div class="training-table" id="trainingTable"></div>
+                </div>
+              </article>
+
+              <article class="card tool-card" data-panel="bmi">
+                <div class="card-header">
+                  <div>
+                    <p class="card-kicker">04</p>
+                    <h3 data-i18n="bmiTitle">BMI Calculator</h3>
+                  </div>
+                  <span class="card-chip" data-i18n="bmiChip">Health snapshot</span>
+                </div>
+
+                <form id="bmiForm" class="calculator-form">
+                  <label>
+                    <span data-i18n="heightLabel">Height</span>
+                    <div class="input-row">
+                      <input id="bmiHeight" name="height" type="number" min="0" step="1" value="175" />
+                      <span class="unit-badge">cm</span>
+                    </div>
+                  </label>
+                  <label>
+                    <span data-i18n="bmiWeightLabel">Weight</span>
+                    <div class="input-row">
+                      <input id="bmiWeight" name="weight" type="number" min="0" step="0.5" value="67" />
+                      <span class="unit-badge">kg</span>
+                    </div>
+                  </label>
+                </form>
+
+                <div class="bmi-grid">
+                  <div class="result-panel">
+                    <p class="result-label" data-i18n="bmiResultLabel">Body mass index</p>
+                    <p class="result-value"><span id="bmiResult">21.9</span></p>
+                    <p class="helper-text" id="bmiClassification">Healthy weight</p>
+                  </div>
+
+                  <div class="table-card bmi-summary">
+                    <div class="table-header">
+                      <h4 data-i18n="idealWeightTitle">Approximate ideal weight</h4>
+                    </div>
+                    <div class="ideal-weight-block">
+                      <p class="ideal-weight-value"><span id="idealWeightResult">67.4</span> kg</p>
+                      <p class="helper-text" data-i18n="idealWeightText">Calculated with BMI 22 as a reference point.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="table-card bmi-visual-card">
+                  <div class="table-header">
+                    <h4 data-i18n="bmiVisualTitle">BMI range</h4>
+                  </div>
+                  <div class="bmi-scale-wrapper">
+                    <div class="bmi-scale">
+                      <div class="bmi-zone under" data-i18n="bmiUnder">Underweight</div>
+                      <div class="bmi-zone normal" data-i18n="bmiNormal">Normal</div>
+                      <div class="bmi-zone over" data-i18n="bmiOver">Overweight</div>
+                      <div class="bmi-zone obese" data-i18n="bmiObese">Obesity</div>
+                      <div class="bmi-indicator" id="bmiIndicator"></div>
+                    </div>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section class="history-section" id="history">
+          <div class="section-heading">
+            <p class="eyebrow" data-i18n="historyEyebrow">Saved locally</p>
+            <h2 data-i18n="historyTitle">Recent history</h2>
+          </div>
+          <div class="history-grid" id="historyGrid"></div>
+        </section>
+      </main>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
