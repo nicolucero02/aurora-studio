@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>BodyTrack</title>
+    <meta
+      name="description"
+      content="Premium BMI tracker PWA with local history and installable iPhone-style experience."
+    />
+    <meta name="theme-color" content="#0d1220" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="BodyTrack" />
+    <link rel="manifest" href="./manifest.json" />
+    <link rel="icon" href="./assets/icons/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./assets/icons/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <div class="app-frame">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Health Metric</p>
+            <h1>BodyTrack</h1>
+          </div>
+          <div class="topbar-controls">
+            <div class="language-switch" role="group" aria-label="Language selector">
+              <button class="language-switch__option is-active" id="langEs" type="button">
+                ES
+              </button>
+              <span class="language-switch__divider">/</span>
+              <button class="language-switch__option" id="langEn" type="button">EN</button>
+            </div>
+            <button
+              class="theme-switch"
+              id="themeToggle"
+              type="button"
+              aria-label="Toggle color theme"
+              aria-pressed="false"
+            >
+              <span class="theme-switch__track">
+                <span class="theme-switch__emoji theme-switch__emoji--sun">☀️</span>
+                <span class="theme-switch__emoji theme-switch__emoji--moon">🌙</span>
+                <span class="theme-switch__thumb"></span>
+              </span>
+            </button>
+          </div>
+        </header>
+
+        <main class="screen">
+          <section class="hero-card">
+            <div class="hero-copy">
+              <p class="eyebrow eyebrow--hero" data-i18n="heroLabel">Body Mass Index</p>
+              <h2 data-i18n="heroTitle">Track your current shape with a refined, app-like flow.</h2>
+              <p class="hero-text" data-i18n="heroText">
+                Save local snapshots, compare your trend and keep the experience
+                ready to install from Safari.
+              </p>
+            </div>
+
+            <div class="hero-stats">
+              <article class="stat-pill">
+                <span data-i18n="recordsLabel">Records</span>
+                <strong id="recordCount">0</strong>
+              </article>
+              <article class="stat-pill">
+                <span data-i18n="latestBmiLabel">Latest BMI</span>
+                <strong id="latestBmi">--</strong>
+              </article>
+            </div>
+          </section>
+
+          <section class="card input-card">
+            <div class="card-head">
+              <div>
+                <p class="eyebrow" data-i18n="newEntryLabel">New Entry</p>
+                <h3 data-i18n="calculateTitle">Calculate your BMI</h3>
+              </div>
+            </div>
+
+            <form id="bmiForm" class="bmi-form">
+              <label class="field">
+                <span data-i18n="heightLabel">Height (meters)</span>
+                <input
+                  id="height"
+                  name="height"
+                  type="number"
+                  inputmode="decimal"
+                  min="1.20"
+                  max="2.30"
+                  step="0.01"
+                  placeholder="1.72"
+                  data-placeholder-key="heightPlaceholder"
+                  required
+                />
+              </label>
+
+              <label class="field">
+                <span data-i18n="weightLabel">Weight (kg)</span>
+                <input
+                  id="weight"
+                  name="weight"
+                  type="number"
+                  inputmode="decimal"
+                  min="20"
+                  max="250"
+                  step="0.1"
+                  placeholder="72.4"
+                  data-placeholder-key="weightPlaceholder"
+                  required
+                />
+              </label>
+
+              <div class="actions">
+                <button class="primary-button" type="submit" data-i18n="calculateButton">
+                  Calculate
+                </button>
+                <button class="secondary-button" type="button" id="resetButton">
+                  <span data-i18n="clearButton">Clear</span>
+                </button>
+              </div>
+            </form>
+          </section>
+
+          <section class="card result-card" id="resultCard">
+            <div class="card-head">
+              <div>
+                <p class="eyebrow" data-i18n="currentResultLabel">Current Result</p>
+                <h3 data-i18n="snapshotTitle">Your BMI snapshot</h3>
+              </div>
+              <span class="status-badge" id="statusBadge" data-i18n="waitingState">Waiting</span>
+            </div>
+
+            <div class="empty-state" id="emptyState">
+              <div class="empty-state__orb"></div>
+              <p data-i18n="emptyStateText">
+                Enter height and weight to reveal your BMI, category and ideal range.
+              </p>
+            </div>
+
+            <div class="result-panel hidden" id="resultPanel">
+              <div class="bmi-display">
+                <div class="bmi-display__value" id="bmiValue">0.0</div>
+                <div class="bmi-display__meta">
+                  <p id="bmiState">Healthy weight</p>
+                  <small id="idealWeight">Ideal weight: --</small>
+                </div>
+              </div>
+
+              <div class="meter-wrap">
+                <div class="meter-scale">
+                  <div class="meter-segment underweight"></div>
+                  <div class="meter-segment healthy"></div>
+                  <div class="meter-segment overweight"></div>
+                  <div class="meter-segment obesity"></div>
+                  <span class="meter-threshold" style="--threshold-position: var(--bmi-threshold-1)"></span>
+                  <span class="meter-threshold" style="--threshold-position: var(--bmi-threshold-2)"></span>
+                  <span class="meter-threshold" style="--threshold-position: var(--bmi-threshold-3)"></span>
+                  <div class="meter-indicator" id="meterIndicator"></div>
+                </div>
+                <div class="meter-labels">
+                  <span style="--label-position: var(--bmi-threshold-1)">18.5</span>
+                  <span style="--label-position: var(--bmi-threshold-2)">25</span>
+                  <span style="--label-position: var(--bmi-threshold-3)">30</span>
+                </div>
+              </div>
+
+              <div class="summary-grid">
+                <article class="summary-card">
+                  <span data-i18n="summaryHeightLabel">Height</span>
+                  <strong id="summaryHeight">--</strong>
+                </article>
+                <article class="summary-card">
+                  <span data-i18n="summaryWeightLabel">Weight</span>
+                  <strong id="summaryWeight">--</strong>
+                </article>
+                <article class="summary-card">
+                  <span data-i18n="summaryStatusLabel">Status</span>
+                  <strong id="summaryStatus">--</strong>
+                </article>
+              </div>
+            </div>
+          </section>
+
+          <section class="card history-card">
+            <div class="card-head">
+              <div>
+                <p class="eyebrow" data-i18n="timelineLabel">Local Timeline</p>
+                <h3 data-i18n="savedEntriesTitle">Saved entries</h3>
+              </div>
+              <button class="ghost-button" type="button" id="clearHistoryButton">
+                <span data-i18n="clearHistoryButton">Clear history</span>
+              </button>
+            </div>
+
+            <div class="history-empty" id="historyEmpty" data-i18n="historyEmptyText">
+              No records yet. Your saved BMI entries will appear here.
+            </div>
+            <div class="history-list" id="historyList"></div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
