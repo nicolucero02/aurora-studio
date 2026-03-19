@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Color Flip: juego web estático de velocidad mental y reacción."
+    />
+    <title>Color Flip</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Sora:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <div class="bg-orb orb-a"></div>
+      <div class="bg-orb orb-b"></div>
+      <div class="noise"></div>
+
+      <main class="app">
+        <section class="screen screen-active" data-screen="menu" aria-labelledby="game-title">
+          <div class="card hero-card">
+            <p class="eyebrow">Arcade reflex game</p>
+            <h1 id="game-title">Color Flip</h1>
+            <p class="subtitle">
+              Leé, mirá y decidí en segundos si la palabra coincide con su color real.
+            </p>
+
+            <div class="difficulty-picker" role="radiogroup" aria-label="Seleccionar dificultad">
+              <button class="difficulty-btn is-selected" data-difficulty="easy" role="radio" aria-checked="true">
+                Easy
+              </button>
+              <button class="difficulty-btn" data-difficulty="normal" role="radio" aria-checked="false">
+                Normal
+              </button>
+              <button class="difficulty-btn" data-difficulty="hard" role="radio" aria-checked="false">
+                Hard
+              </button>
+            </div>
+
+            <div class="menu-actions">
+              <button class="btn btn-primary" id="play-btn">Jugar</button>
+              <button class="btn btn-secondary" id="how-to-btn">Cómo jugar</button>
+            </div>
+
+            <div class="menu-stats">
+              <div class="stat-chip">
+                <span>Mejor Easy</span>
+                <strong id="menu-best-easy">0</strong>
+              </div>
+              <div class="stat-chip">
+                <span>Mejor Normal</span>
+                <strong id="menu-best-normal">0</strong>
+              </div>
+              <div class="stat-chip">
+                <span>Mejor Hard</span>
+                <strong id="menu-best-hard">0</strong>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="screen" data-screen="howto" aria-labelledby="howto-title">
+          <div class="card info-card">
+            <div class="panel-header">
+              <p class="eyebrow">Cómo jugar</p>
+              <h2 id="howto-title">Reconocé el truco antes que el reloj</h2>
+            </div>
+
+            <div class="instructions-grid">
+              <div class="instruction-step">
+                <span>1</span>
+                <p>Leé la palabra que aparece en pantalla.</p>
+              </div>
+              <div class="instruction-step">
+                <span>2</span>
+                <p>Mirá el color real con el que está pintada.</p>
+              </div>
+              <div class="instruction-step">
+                <span>3</span>
+                <p>Decidí si texto y color coinciden o no.</p>
+              </div>
+              <div class="instruction-step">
+                <span>4</span>
+                <p>Respondé antes de que termine el tiempo.</p>
+              </div>
+            </div>
+
+            <div class="demo-card" aria-label="Ejemplo visual">
+              <p class="demo-label">Mini demo</p>
+              <div class="demo-word" style="color: #1d4ed8;">ROJO</div>
+              <p class="demo-copy">
+                La palabra dice <strong>ROJO</strong>, pero el color real es <strong>azul</strong>.
+              </p>
+              <div class="demo-answer">Respuesta correcta: <strong>No coincide</strong></div>
+            </div>
+
+            <button class="btn btn-secondary" id="back-to-menu-btn">Volver al menú</button>
+          </div>
+        </section>
+
+        <section class="screen" data-screen="game" aria-labelledby="gameplay-title">
+          <div class="card game-card">
+            <header class="hud">
+              <div class="hud-block">
+                <span>Score</span>
+                <strong id="score">0</strong>
+              </div>
+              <div class="hud-block">
+                <span>Combo</span>
+                <strong id="combo">0</strong>
+              </div>
+              <div class="hud-block">
+                <span>Best</span>
+                <strong id="best-score">0</strong>
+              </div>
+              <div class="hud-block">
+                <span>Dificultad</span>
+                <strong id="current-difficulty">Easy</strong>
+              </div>
+            </header>
+
+            <div class="timer-wrap" aria-label="Temporizador">
+              <div class="timer-bar">
+                <div class="timer-fill" id="timer-fill"></div>
+              </div>
+              <span class="timer-text" id="timer-text">100%</span>
+            </div>
+
+            <div class="play-zone">
+              <p class="eyebrow" id="gameplay-title">Decidí rápido</p>
+              <div class="word-display" id="word-display" aria-live="polite">ROJO</div>
+              <p class="feedback" id="feedback" aria-live="polite">Nueva ronda</p>
+            </div>
+
+            <div class="answer-actions">
+              <button class="btn btn-answer btn-match" id="match-btn">Coincide</button>
+              <button class="btn btn-answer btn-mismatch" id="mismatch-btn">No coincide</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="screen" data-screen="gameover" aria-labelledby="gameover-title">
+          <div class="card end-card">
+            <p class="eyebrow">Game Over</p>
+            <h2 id="gameover-title">Tu reacción marcó el ritmo</h2>
+
+            <div class="results-grid">
+              <div class="result-box">
+                <span>Score final</span>
+                <strong id="final-score">0</strong>
+              </div>
+              <div class="result-box">
+                <span>Mejor score</span>
+                <strong id="final-best-score">0</strong>
+              </div>
+              <div class="result-box">
+                <span>Dificultad</span>
+                <strong id="final-difficulty">Easy</strong>
+              </div>
+            </div>
+
+            <div class="menu-actions">
+              <button class="btn btn-primary" id="retry-btn">Reintentar</button>
+              <button class="btn btn-secondary" id="menu-btn">Menú</button>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
