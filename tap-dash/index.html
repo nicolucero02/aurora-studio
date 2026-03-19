@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0f1226">
+  <title>Tap Dash</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app-shell">
+    <section class="game-frame">
+      <header class="hud" id="gameHud">
+        <div class="brand">
+          <span class="brand__eyebrow">Arcade Run</span>
+          <h1>Tap Dash</h1>
+        </div>
+        <div class="stats">
+          <div class="stat-card stat-card--difficulty">
+            <span class="stat-label">Mode</span>
+            <strong id="activeDifficulty">Normal</strong>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Score</span>
+            <strong id="score">0</strong>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Best</span>
+            <strong id="highScore">0</strong>
+          </div>
+        </div>
+      </header>
+
+      <section class="play-area">
+        <section class="screen screen--active" id="menuScreen">
+          <div class="panel panel--screen">
+            <p class="panel__eyebrow">Main Menu</p>
+            <h2>Tap Dash</h2>
+            <p class="panel__text">
+              Eleg&iacute; la dificultad y empez&aacute; cuando quieras. El juego solo arranca desde el bot&oacute;n de jugar.
+            </p>
+            <div class="difficulty-picker" id="difficultyPicker" role="radiogroup" aria-label="Seleccionar dificultad">
+              <button class="difficulty-option" type="button" data-difficulty="easy" aria-pressed="false">Easy</button>
+              <button class="difficulty-option" type="button" data-difficulty="normal" aria-pressed="false">Normal</button>
+              <button class="difficulty-option" type="button" data-difficulty="hard" aria-pressed="false">Hard</button>
+            </div>
+            <div class="panel__actions panel__actions--split">
+              <button class="primary-button" id="startButton">Jugar</button>
+              <button class="secondary-button" id="howToPlayButton">C&oacute;mo jugar</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="screen" id="howToPlayScreen">
+          <div class="panel panel--screen">
+            <p class="panel__eyebrow">C&oacute;mo jugar</p>
+            <h2>Entendelo en un vistazo</h2>
+            <p class="panel__text">
+              El bloque avanza solo. Vos solo decid&iacute;s el giro correcto antes del borde.
+            </p>
+            <section class="how-to-play" aria-label="C&oacute;mo jugar">
+              <div class="demo-card" aria-hidden="true">
+                <div class="demo-card__label">Demo</div>
+                <div class="demo-card__scene">
+                  <div class="demo-path demo-path--horizontal"></div>
+                  <div class="demo-path demo-path--vertical"></div>
+                  <div class="demo-turn-cue">Tap</div>
+                  <div class="demo-success-badge">Correcto</div>
+                  <div class="demo-runner"></div>
+                </div>
+                <p class="demo-card__caption">Gir&aacute;s a tiempo y segu&iacute;s el camino</p>
+              </div>
+              <div class="how-to-play__copy">
+                <p class="how-to-play__title">C&oacute;mo jugar</p>
+                <ul class="how-to-play__list">
+                  <li>Toc&aacute; o hac&eacute; click para girar.</li>
+                  <li>Gir&aacute; antes de llegar al borde.</li>
+                  <li>Si fall&aacute;s, perd&eacute;s.</li>
+                </ul>
+              </div>
+            </section>
+            <div class="panel__actions">
+              <button class="secondary-button" id="backToMenuButton">Volver al men&uacute;</button>
+            </div>
+            <p class="panel__hint">Controles durante la partida: tap, click o barra espaciadora</p>
+          </div>
+        </section>
+
+        <section class="screen" id="gameScreen">
+          <canvas id="gameCanvas" aria-label="Juego Tap Dash"></canvas>
+
+          <div class="overlay" id="gameOverOverlay">
+            <div class="panel">
+              <p class="panel__eyebrow">Game Over</p>
+              <h2>Se cort&oacute; la racha</h2>
+              <p class="panel__text">Dificultad actual: <strong id="finalDifficulty">Normal</strong></p>
+              <p class="panel__text">Puntaje final: <strong id="finalScore">0</strong></p>
+              <p class="panel__text">Mejor puntaje: <strong id="finalHighScore">0</strong></p>
+              <div class="panel__actions panel__actions--split">
+                <button class="primary-button" id="restartButton">Reintentar</button>
+                <button class="secondary-button" id="menuButton">Volver al men&uacute;</button>
+              </div>
+              <p class="panel__hint">Busc&aacute; el giro antes de que llegue.</p>
+            </div>
+          </div>
+        </section>
+      </section>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
