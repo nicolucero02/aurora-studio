@@ -16,7 +16,16 @@ type Option = {
 };
 
 export function ChatWidget() {
-  const { messages } = useLanguage();
+  const { locale, messages } = useLanguage();
+
+  return <ChatWidgetContent key={locale} messages={messages} />;
+}
+
+function ChatWidgetContent({
+  messages,
+}: {
+  messages: ReturnType<typeof useLanguage>["messages"];
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const [entries, setEntries] = useState<ChatEntry[]>([
     { type: "assistant", text: messages.chat.initialMessage, showCta: false },
@@ -203,7 +212,9 @@ export function ChatWidget() {
                         : "text-[var(--color-accent)]"
                     }`}
                   >
-                    {entry.type === "user" ? "Tu respuesta" : messages.chat.title}
+                    {entry.type === "user"
+                      ? messages.chat.userAnswerLabel
+                      : messages.chat.title}
                   </p>
                   <p>{entry.text}</p>
                   {entry.type === "assistant" && entry.showCta ? (

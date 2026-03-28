@@ -1,23 +1,24 @@
 "use client";
 
 import { useState } from "react";
-import { faqs } from "@/data/faqs";
+import { useLanguage } from "@/components/providers/language-provider";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 
 export function FaqSection() {
-  const [openItem, setOpenItem] = useState(0);
+  const { messages } = useLanguage();
+  const [openItem, setOpenItem] = useState<number | null>(null);
 
   return (
     <Container>
       <SectionHeading
-        eyebrow="FAQ"
-        title="Preguntas frecuentes antes de pedir una propuesta."
-        description="Una FAQ corta despeja objeciones comunes y mejora la calidad del lead que llega al formulario."
+        eyebrow={messages.faq.eyebrow}
+        title={messages.faq.title}
+        description={messages.faq.description}
       />
 
       <div className="mt-12 grid gap-4">
-        {faqs.map((item, index) => {
+        {messages.faq.items.map((item, index) => {
           const isOpen = openItem === index;
 
           return (
@@ -27,7 +28,7 @@ export function FaqSection() {
             >
               <button
                 type="button"
-                onClick={() => setOpenItem(isOpen ? -1 : index)}
+                onClick={() => setOpenItem(isOpen ? null : index)}
                 className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
               >
                 <span className="text-lg font-semibold text-white">
