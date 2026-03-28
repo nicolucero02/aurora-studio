@@ -1,18 +1,22 @@
-import { caseStudies } from "@/data/case-studies";
+"use client";
+
+import { useLanguage } from "@/components/providers/language-provider";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 
 export function CaseStudiesSection() {
+  const { messages } = useLanguage();
+
   return (
     <Container id="casos">
       <SectionHeading
-        eyebrow="Casos de estudio"
-        title="Ejemplos de cómo una dirección creativa correcta cambia percepción y resultados."
-        description="Usamos casos mock realistas para mostrar el tipo de entregable, narrativa e impacto que un estudio boutique puede ofrecer."
+        eyebrow={messages.caseStudies.eyebrow}
+        title={messages.caseStudies.title}
+        description={messages.caseStudies.description}
       />
 
       <div className="mt-12 grid gap-6">
-        {caseStudies.map((study) => (
+        {messages.caseStudies.items.map((study) => (
           <article
             key={study.client}
             className="grid gap-6 rounded-[2rem] border border-white/10 bg-white/5 p-8 lg:grid-cols-[1.1fr_0.9fr]"
@@ -31,7 +35,7 @@ export function CaseStudiesSection() {
 
             <div className="rounded-[1.5rem] bg-[var(--color-surface)] p-6">
               <p className="text-sm font-semibold uppercase tracking-[0.22em] text-white">
-                Impacto estimado
+                {messages.caseStudies.impactLabel}
               </p>
               <ul className="mt-4 space-y-3 text-sm text-slate-300">
                 {study.impact.map((item) => (

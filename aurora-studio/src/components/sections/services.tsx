@@ -1,18 +1,22 @@
-import { services } from "@/data/services";
+"use client";
+
+import { useLanguage } from "@/components/providers/language-provider";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 
 export function ServicesSection() {
+  const { messages } = useLanguage();
+
   return (
     <Container id="servicios">
       <SectionHeading
-        eyebrow="Servicios"
-        title="Diseño estratégico para marcas que quieren verse y vender mejor."
-        description="Cada servicio está pensado para resolver una necesidad clara sin sumar complejidad innecesaria."
+        eyebrow={messages.services.eyebrow}
+        title={messages.services.title}
+        description={messages.services.description}
       />
 
       <div className="mt-12 grid gap-6 lg:grid-cols-3">
-        {services.map((service) => (
+        {messages.services.items.map((service) => (
           <article
             key={service.slug}
             className="rounded-[2rem] border border-white/10 bg-white/5 p-8 transition hover:-translate-y-1 hover:bg-white/[0.08]"

@@ -1,18 +1,22 @@
-import { processSteps } from "@/data/process";
+"use client";
+
+import { useLanguage } from "@/components/providers/language-provider";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 
 export function ProcessSection() {
+  const { messages } = useLanguage();
+
   return (
     <Container id="proceso" className="pt-8">
       <SectionHeading
-        eyebrow="Cómo trabajamos"
-        title="Un proceso corto, claro y diseñado para avanzar sin fricción."
-        description="La idea es tomar buenas decisiones rápido, con entregables concretos y foco en impacto comercial."
+        eyebrow={messages.process.eyebrow}
+        title={messages.process.title}
+        description={messages.process.description}
       />
 
       <div className="mt-12 grid gap-5 lg:grid-cols-4">
-        {processSteps.map((step) => (
+        {messages.process.steps.map((step) => (
           <article
             key={step.step}
             className="rounded-[2rem] border border-white/10 bg-[var(--color-surface)] p-6"

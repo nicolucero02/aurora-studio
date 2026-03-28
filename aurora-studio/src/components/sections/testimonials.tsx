@@ -1,18 +1,22 @@
-import { testimonials } from "@/data/testimonials";
+"use client";
+
+import { useLanguage } from "@/components/providers/language-provider";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 
 export function TestimonialsSection() {
+  const { messages } = useLanguage();
+
   return (
     <Container>
       <SectionHeading
-        eyebrow="Testimonios"
-        title="La mejor prueba no es el diseño, sino la confianza que genera."
-        description="Los testimonios ayudan a bajar fricción en la decisión de compra y refuerzan credibilidad en la home."
+        eyebrow={messages.testimonials.eyebrow}
+        title={messages.testimonials.title}
+        description={messages.testimonials.description}
       />
 
       <div className="mt-12 grid gap-6 lg:grid-cols-3">
-        {testimonials.map((testimonial) => (
+        {messages.testimonials.items.map((testimonial) => (
           <article
             key={testimonial.author}
             className="rounded-[2rem] border border-white/10 bg-white/5 p-8"
